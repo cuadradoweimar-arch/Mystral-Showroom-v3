@@ -1,51 +1,54 @@
-const images = import.meta.glob("../../assets/brochure/*.webp", {
+const images = import.meta.glob("../../assets/brochure/*.jpg", {
   eager: true,
   import: "default",
 });
 
 const files = [
-  "inicio.webp",
-  "01.webp",
-  "02.webp",
-  "03.webp",
-  "04.webp",
-  "05.webp",
-  "06.webp",
-  "07.webp",
-  "08.webp",
-  "09.webp",
-  "010.webp",
-  "011.webp",
-  "012.webp",
-  "013.webp",
-  "014.webp",
-  "015.webp",
-  "016.webp",
-  "017.webp",
-  "018.webp",
-  "019.webp",
-  "020.webp",
-  "021.webp",
-  "022.webp",
-  "023.webp",
-  "024.webp",
-  "025.webp",
-  "026.webp",
-  "027.webp",
-  "028.webp",
-  "029.webp",
-  "030.webp",
-  "031.webp",
-  "032.webp",
-  "fin.webp",
+  "inicio.jpg",
+  "01.jpg",
+  "02.jpg",
+  "03.jpg",
+  "04.jpg",
+  "05.jpg",
+  "06.jpg",
+  "07.jpg",
+  "08.jpg",
+  "09.jpg",
+  "010.jpg",
+  "011.jpg",
+  "012.jpg",
+  "013.jpg",
+  "014.jpg",
+  "015.jpg",
+  "016.jpg",
+  "017.jpg",
+  "018.jpg",
+  "019.jpg",
+  "020.jpg",
+  "021.jpg",
+  "022.jpg",
+  "023.jpg",
+  "024.jpg",
+  "025.jpg",
+  "026.jpg",
+  "027.jpg",
+  "028.jpg",
+  "029.jpg",
+  "030.jpg",
+  "031.jpg",
+  "032.jpg",
+  "fin.jpg",
 ];
 
 export const slides = files.map((file) => ({
   image: images[`../../assets/brochure/${file}`],
   type:
-    file === "inicio.webp"
+    file === "inicio.jpg"
       ? "start"
-      : file === "fin.webp"
+      : file === "fin.jpg"
       ? "end"
       : undefined,
 }));
+
+console.log(images);
+console.log(slides);
