@@ -1,0 +1,325 @@
+.scene-menu{
+
+    position:fixed;
+
+    top:50%;
+    right:-90px;
+
+    transform:translateY(-50%);
+
+    width:380px;
+
+    z-index:1000;
+
+    pointer-events:none;
+
+}
+
+.scene-menu-items{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:stretch;
+
+    pointer-events:auto;
+
+}
+
+/* ==========================
+   BOTONES
+========================== */
+
+.scene-item{
+
+    width:100%;
+
+    padding:20px 0;
+
+    background:transparent;
+
+    border:none;
+
+    border-bottom:1px solid rgba(255,255,255,.12);
+
+    display:flex;
+
+    justify-content:flex-start;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    color:rgba(255,255,255,.75);
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:20px;
+
+    font-weight:300;
+
+    letter-spacing:6px;
+
+    text-transform:uppercase;
+
+    transition:all .45s ease;
+
+}
+
+.scene-text{
+
+    transition:all .45s ease;
+
+}
+
+.scene-line{
+
+    display:none;
+
+}
+
+/* ==========================
+   HOVER
+========================== */
+
+.scene-item:hover{
+
+    color:#fff;
+
+    padding-left:12px;
+
+    border-bottom:1px solid rgba(255,255,255,.45);
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,.45);
+
+}
+
+/* ==========================
+   ACTIVO
+========================== */
+
+.scene-item.active{
+
+    color:#fff;
+
+    padding-left:12px;
+
+    border-bottom:1px solid rgba(255,255,255,.75);
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,.45),
+        0 0 20px rgba(255,255,255,.25);
+
+}
+
+/* ==========================
+   BOTÓN FULLSCREEN
+========================== */
+
+.fullscreen-button{
+
+    position:fixed;
+
+    right:35px;
+
+    bottom:35px;
+
+    width:58px;
+
+    height:58px;
+
+    border:none;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(15px);
+
+    color:white;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    pointer-events:auto;
+
+}
+
+.fullscreen-button:hover{
+
+    transform:scale(1.08);
+
+    background:rgba(255,255,255,.22);
+
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+.mobile-menu-button{
+
+    display:none;
+
+}
+
+@media (max-width:900px){
+
+.mobile-menu-button{
+
+    display:flex;
+
+    position:fixed;
+
+    top:20px;
+
+    left:20px;
+
+    width:52px;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:rgba(0,0,0,.35);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    color:white;
+
+    font-size:28px;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    z-index:4000;
+
+    transition:.3s;
+
+}
+
+.mobile-menu-button:hover{
+
+    background:rgba(255,255,255,.18);
+
+    transform:scale(1.05);
+
+}
+
+/* ==========================
+   MENÚ LATERAL
+========================== */
+
+.scene-menu{
+
+    position:fixed;
+
+    top:0;
+
+    left:-300px;
+
+    width:280px;
+
+    height:100vh;
+
+    transform:none;
+
+    background:rgba(8,12,18,.88);
+
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+
+    transition:left .35s ease;
+
+    padding-top:90px;
+
+    z-index:3000;
+
+    pointer-events:auto;
+
+}
+
+.scene-menu.open{
+
+    left:0;
+
+}
+
+.scene-menu::before{
+
+    content:"MYSTRAL";
+
+    position:absolute;
+
+    top:28px;
+
+    left:24px;
+
+    color:#ffffff;
+
+    font-family:"Belleza",sans-serif;
+
+    font-size:26px;
+
+    letter-spacing:4px;
+
+}
+
+.scene-menu-items{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:stretch;
+
+    padding:0 24px;
+
+}
+
+.scene-item{
+
+    width:100%;
+
+    padding:18px 0;
+
+    font-size:18px;
+
+    letter-spacing:3px;
+
+    border-bottom:1px solid rgba(255,255,255,.10);
+
+}
+
+.fullscreen-button{
+
+    right:20px;
+
+    bottom:20px;
+
+    width:50px;
+
+    height:50px;
+
+    font-size:20px;
+
+}
+
+}

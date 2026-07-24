@@ -1,0 +1,387 @@
+.tour360{
+
+    position:fixed;
+    inset:0;
+
+    background:#111;
+
+    overflow:hidden;
+
+    z-index:9999;
+
+}
+
+/* ===========================
+   VISOR
+=========================== */
+
+.tour360-viewer{
+
+    position:absolute;
+    inset:0;
+
+}
+
+/* ===========================
+   MENÚ IZQUIERDO
+=========================== */
+
+.tour360-menu{
+
+    position:absolute;
+
+    top:50%;
+    right:-100px;
+    left:auto;
+
+    transform:translateY(-50%);
+
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+
+    z-index:200;
+
+    width:340px;
+
+    padding:0;
+
+    background:transparent;
+
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+
+    border:none;
+
+    box-shadow:none;
+
+}
+/* ===========================
+   TÍTULO
+=========================== */
+
+.tour360-menu h1{
+
+    margin:0 0 55px;
+
+    color:white;
+
+    font-size:34px;
+
+    font-weight:300;
+
+    letter-spacing:10px;
+
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+
+}
+
+/* ===========================
+   OPCIONES
+=========================== */
+
+/* ===========================
+   OPCIONES PREMIUM
+=========================== */
+
+.menu-item{
+
+    width:100%;
+
+    padding:18px 0;
+
+    background:transparent;
+
+    border:none;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+    color:rgba(255,255,255,.82);
+
+    font-size:18px;
+
+    font-weight:300;
+
+    letter-spacing:5px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:
+        color .35s ease,
+        transform .35s ease,
+        letter-spacing .35s ease,
+        border-color .35s ease,
+        text-shadow .35s ease;
+
+    text-shadow:
+        0 2px 8px rgba(0,0,0,.35);
+
+}
+
+/* EFECTO PREMIUM */
+
+.menu-item:hover{
+
+    color:#ffffff;
+
+    transform:translateX(12px) scale(1.02);
+
+    letter-spacing:7px;
+
+    border-bottom:1px solid rgba(255,255,255,.75);
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,.55),
+        0 0 18px rgba(255,255,255,.35),
+        0 2px 12px rgba(0,0,0,.45);
+
+}
+/* ===========================
+   BOTÓN VOLVER
+=========================== */
+
+.tour360-back{
+
+    position:absolute;
+
+    left:35px;
+
+    bottom:35px;
+
+    z-index:300;
+
+    padding:15px 30px;
+
+    border-radius:14px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    background:rgba(255,255,255,.10);
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    color:white;
+
+    font-size:15px;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:all .3s ease;
+
+}
+
+.tour360-back:hover{
+
+    background:rgba(255,255,255,.18);
+
+    transform:translateY(-3px);
+
+}.panorama-info{
+
+    position:absolute;
+
+    top:45px;
+    left:55px;
+
+    z-index:250;
+
+    color:white;
+
+    text-shadow:
+        0 2px 12px rgba(0,0,0,.45);
+
+}
+
+.panorama-apartment{
+
+    display:block;
+
+    margin-bottom:10px;
+
+    font-size:16px;
+
+    font-weight:400;
+
+    letter-spacing:6px;
+
+    color:rgba(255,255,255,.75);
+
+    text-transform:uppercase;
+
+}
+
+.panorama-title{
+
+    margin:0;
+
+    font-size:42px;
+
+    font-weight:300;
+
+    letter-spacing:6px;
+
+    color:white;
+
+    text-transform:uppercase;
+
+}/*==================================
+  INDICADOR ARRASTRAR
+===================================*/
+
+.drag-indicator{
+
+    position:absolute;
+
+    left:50%;
+    bottom:55px;
+
+    transform:translateX(-50%);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    z-index:400;
+
+    color:rgba(255,255,255,.75);
+
+    pointer-events:none;
+
+    animation:fadeOut 5s forwards;
+
+}
+
+.drag-arrows{
+
+    font-size:26px;
+
+    letter-spacing:4px;
+
+    margin-bottom:8px;
+
+    animation:dragMove 1.6s ease-in-out infinite;
+
+}
+
+.drag-indicator span{
+
+    font-size:14px;
+
+    letter-spacing:5px;
+
+    text-transform:uppercase;
+
+}
+
+@keyframes dragMove{
+
+    0%{
+        transform:translateX(-10px);
+    }
+
+    50%{
+        transform:translateX(10px);
+    }
+
+    100%{
+        transform:translateX(-10px);
+    }
+
+}
+
+@keyframes fadeOut{
+
+    0%{
+        opacity:1;
+    }
+
+    80%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:0;
+    }
+
+}/* =========================================================
+   MOBILE - TOUR 360
+========================================================= */
+
+@media (max-width:900px){
+
+    .tour360-menu{
+
+        top:170px;
+        right:20px;
+
+        left:auto;
+
+        transform:none;
+
+        width:220px;
+
+        align-items:flex-end;
+
+    }
+
+    .tour360-menu h1{
+
+        margin-bottom:30px;
+
+        font-size:26px;
+
+        letter-spacing:6px;
+
+    }
+
+    .menu-item{
+
+        padding:14px 0;
+
+        font-size:14px;
+
+        letter-spacing:3px;
+
+    }
+
+    .panorama-info{
+
+        top:60px;
+        left:25px;
+
+    }
+
+    .panorama-apartment{
+
+        font-size:13px;
+
+        letter-spacing:4px;
+
+    }
+
+    .panorama-title{
+
+        font-size:28px;
+
+        letter-spacing:3px;
+
+    }
+
+    .tour360-back{
+
+        left:20px;
+
+        bottom:20px;
+
+        padding:14px 24px;
+
+        font-size:14px;
+
+    }
+
+}

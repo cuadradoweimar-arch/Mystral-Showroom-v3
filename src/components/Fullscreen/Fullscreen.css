@@ -1,0 +1,67 @@
+.fullscreen{
+
+    position:fixed;
+
+    top:20px;
+
+    right: 130px;
+
+    width:52px;
+
+    height:52px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    z-index:99999;
+
+    color:white;
+
+    font-size:22px;
+
+    background:rgba(255,255,255,.10);
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,.20);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.25);
+
+    transition:
+        transform .35s ease,
+        background .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
+
+}
+
+.fullscreen:hover{
+
+    transform:translateY(-2px) scale(1.08);
+
+    background:rgba(255,255,255,.20);
+
+    border-color:rgba(255,255,255,.45);
+
+    box-shadow:
+        0 0 20px rgba(255,255,255,.20),
+        0 12px 30px rgba(0,0,0,.35);
+
+}
+
+.fullscreen:active{
+
+    transform:scale(.96);
+
+}

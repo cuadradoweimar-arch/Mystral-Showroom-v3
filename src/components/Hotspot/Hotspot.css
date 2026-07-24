@@ -1,0 +1,238 @@
+.hotspot{
+
+    position:absolute;
+
+    transform:translate(-50%,-50%);
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+    z-index:500;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    transition:.35s ease;
+
+}
+
+/* ===========================
+   CÍRCULO PRINCIPAL
+=========================== */
+
+.circle{
+
+    width:56px;
+
+    height:56px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:300;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,.45);
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.35),
+        inset 0 0 12px rgba(255,255,255,.15);
+
+    transition:all .35s ease;
+
+    position:relative;
+
+}
+
+/* ===========================
+   ANILLO DE PULSO
+=========================== */
+
+.pulse{
+
+    position:absolute;
+
+    width:56px;
+
+    height:56px;
+
+    border-radius:50%;
+
+    border:2px solid rgba(255,255,255,.45);
+
+    animation:pulse 2.2s infinite;
+
+}
+
+/* ===========================
+   TEXTO
+=========================== */
+
+.hotspot p{
+
+    margin-top:14px;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:300;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+    opacity:.85;
+
+    transition:.3s;
+
+}
+
+/* ===========================
+   HOVER
+=========================== */
+
+.hotspot:hover .circle{
+
+    transform:scale(1.12);
+
+    background:rgba(255,255,255,.22);
+
+    border-color:white;
+
+    box-shadow:
+        0 0 35px rgba(255,255,255,.35),
+        0 8px 35px rgba(0,0,0,.35);
+
+}
+
+.hotspot:hover p{
+
+    opacity:1;
+
+    transform:translateY(2px);
+
+}
+
+/* ===========================
+   PULSO
+=========================== */
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(.9);
+
+        opacity:.9;
+
+    }
+
+    70%{
+
+        transform:scale(1.8);
+
+        opacity:0;
+
+    }
+
+    100%{
+
+        transform:scale(1.8);
+
+        opacity:0;
+
+    }
+
+}/* =====================================
+   OVERLAY TRANSPARENTE
+===================================== */
+
+.hotspot.overlay{
+
+    transform:none;
+
+    border-radius:10px;
+
+    background:rgba(0,255,110,.18);
+
+    border:2px solid rgba(0,255,110,.75);
+
+    backdrop-filter:blur(3px);
+
+    box-shadow:
+        inset 0 0 18px rgba(0,255,110,.25),
+        0 0 12px rgba(0,255,110,.35);
+
+    transition:.35s;
+
+}
+
+/* Oculta el punto */
+
+.hotspot.overlay .circle,
+.hotspot.overlay .pulse{
+
+    display:none;
+
+}
+
+/* Texto */
+
+.hotspot.overlay p{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    margin:0;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    letter-spacing:2px;
+
+    color:white;
+
+}
+
+/* Hover */
+
+.hotspot.overlay:hover{
+
+    background:rgba(0,255,110,.35);
+
+    border-color:#00ff6a;
+
+    box-shadow:
+        inset 0 0 24px rgba(0,255,110,.45),
+        0 0 22px rgba(0,255,110,.55);
+
+    transform:scale(1.03);
+
+}

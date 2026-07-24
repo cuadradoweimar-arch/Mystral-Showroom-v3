@@ -1,0 +1,654 @@
+.viewer{
+
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(circle at 18% 15%,
+            rgba(82,100,180,.55) 0%,
+            rgba(55,65,120,.25) 25%,
+            transparent 55%),
+
+        radial-gradient(circle at 85% 90%,
+            rgba(180,110,80,.30) 0%,
+            rgba(120,70,55,.15) 25%,
+            transparent 55%),
+
+        linear-gradient(
+            135deg,
+            #1b2240 0%,
+            #16192e 35%,
+            #101321 70%,
+            #0a0d18 100%
+        );
+
+}
+.viewer::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.03),
+            transparent 45%,
+            rgba(0,0,0,.18)
+        );
+
+    pointer-events:none;
+
+    z-index:2;
+
+}
+/* ========================= */
+
+.layer{
+
+    position: absolute;
+    inset: 0;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0;
+
+    transform: scale(1.04);
+
+    filter: blur(6px);
+
+    will-change: opacity, transform, filter;
+
+    transition:
+        opacity .85s cubic-bezier(.22,1,.36,1),
+        transform 1.8s cubic-bezier(.22,1,.36,1),
+        filter .85s cubic-bezier(.22,1,.36,1);
+
+}
+/* ========================= */
+
+.layer.active{
+
+    opacity:1;
+
+    transform:scale(1);
+
+    filter:blur(0);
+
+    z-index:1;
+
+}
+
+/* ========================= */
+
+.explore-button{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:100px;
+
+    transform:translateX(-50%);
+
+    width:260px;
+
+    height:70px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.7);
+
+    color:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    backdrop-filter:blur(8px);
+
+    z-index:100;
+
+}
+
+/* ========================= */
+
+.back-button{
+
+    position:absolute;
+
+    left:40px;
+
+    bottom:40px;
+
+    padding:14px 28px;
+
+    background:rgba(0,0,0,.35);
+
+    border:1px solid rgba(255,255,255,.3);
+
+    color:white;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    backdrop-filter:blur(8px);
+
+    font-size:15px;
+
+    letter-spacing:1px;
+
+    transition:.3s;
+
+    z-index:1000;
+
+}
+
+.back-button:hover{
+
+    background:rgba(255,255,255,.15);
+
+    transform:translateY(-2px);
+
+}/* =========================================================
+   APARTAMENTOS - TIPO A / TIPO B
+========================================================= */
+
+.apartment-selector{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    display:flex;
+
+    flex-direction:row;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:70px;
+}
+
+.apartment-card{
+
+    width:260px;
+
+    height:320px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    color:white;
+
+    background:rgba(255,255,255,.06);
+
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+
+    border:1px solid rgba(255,255,255,.22);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.30);
+
+    transition:.45s ease;
+
+    pointer-events:auto;
+
+}
+
+.apartment-card:hover{
+
+    transform:translateY(-8px) scale(1.03);
+
+    background:rgba(255,255,255,.10);
+
+    border-color:rgba(255,255,255,.45);
+
+    box-shadow:
+        0 0 35px rgba(255,255,255,.15),
+        0 20px 50px rgba(0,0,0,.40);
+
+}
+
+.apartment-card h2{
+
+    margin:0;
+
+    font-size:44px;
+
+    font-weight:300;
+
+    letter-spacing:4px;
+
+}
+
+.apartment-card span{
+
+    margin-top:12px;
+
+    font-size:20px;
+
+    opacity:.85;
+
+}
+
+.apartment-card button{
+
+    margin-top:45px;
+
+    width:170px;
+
+    height:48px;
+
+    border:1px solid rgba(255,255,255,.75);
+
+    background:transparent;
+
+    color:white;
+
+    font-size:15px;
+
+    letter-spacing:3px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+.apartment-card button:hover{
+
+    background:white;
+
+    color:black;
+
+}
+
+/*=========================================================
+    EXPLORER PANEL
+=========================================================*/
+
+.explorer-panel{
+
+    position:absolute;
+
+    top:50%;
+
+    right:-240px;
+    left:auto;
+
+    transform:translateY(-50%);
+
+    width:260px;
+
+    height:430px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+
+    /* Cristal ahumado */
+    background:rgba(18,22,28,.28);
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    border-radius:24px;
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.18);
+
+    z-index:900;
+
+    transition:all .45s ease;
+
+}
+/*-------------------------*/
+
+.explorer-header{
+
+    flex-shrink:0;
+
+    padding:26px 28px 18px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+    background:rgba(255,255,255,.02);
+
+}
+
+.explorer-header span{
+
+    color:white;
+
+    font-size:13px;
+
+    letter-spacing:6px;
+
+    font-weight:500;
+
+}
+
+/*-------------------------*/
+
+.explorer-content{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:22px 18px 28px;
+
+}
+
+.explorer-content::-webkit-scrollbar{
+
+    width:4px;
+
+}
+
+.explorer-content::-webkit-scrollbar-thumb{
+
+    background:rgba(255,255,255,.18);
+
+    border-radius:20px;
+
+}
+
+/*-------------------------*/
+
+.explorer-item{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    padding:15px 12px;
+
+    margin-bottom:8px;
+
+    border:none;
+
+    background:none;
+
+    color:rgba(255,255,255,.92);
+
+    font-size:18px;
+
+    font-weight:300;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:.30s;
+
+}
+
+.explorer-item:hover{
+
+    background:rgba(255,255,255,.06);
+
+    border-radius:12px;
+
+}
+
+.indicator{
+
+    width:3px;
+
+    height:26px;
+
+    border-radius:20px;
+
+    background:transparent;
+
+    transition:.35s;
+
+}
+
+.explorer-item.active .indicator{
+
+    background:white;
+
+}
+
+.explorer-item:hover .indicator{
+
+    background:rgba(255,255,255,.5);
+
+}.explorer-text{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    line-height:1.1;
+
+}
+
+.explorer-text small{
+
+    margin-top:4px;
+
+    font-size:16px;
+
+    color:rgba(255,255,255,.75);
+
+    letter-spacing:2px;
+
+}
+/* Video layer: full-bleed, cover */
+.layer-video{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    -o-object-fit:cover;
+
+    pointer-events:none;
+
+    display:block;
+
+}.layer-video{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    -o-object-fit:cover;
+
+    pointer-events:none;
+
+    display:block;
+
+}
+
+/* PEGA AQUÍ ↓↓↓ */
+
+.explorer-panel.open{
+    right:30px;
+}
+
+.explorer-panel.closed{
+    right:-230px;
+}
+
+.explorer-toggle{
+
+    position:absolute;
+
+    top:50%;
+    right:30px;
+
+    transform:translateY(-50%);
+
+    width:42px;
+    height:72px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:none;
+
+    border-radius:14px 0 0 14px;
+
+    background:rgba(18,22,28,.45);
+
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+
+    color:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    z-index:1001;
+
+    transition:.35s;
+
+}
+
+.explorer-toggle:hover{
+    background:rgba(255,255,255,.15);
+}
+
+.explorer-toggle.open{
+    right:290px;
+}/* =========================================================
+   MOBILE - APARTAMENTOS
+========================================================= */
+
+@media (max-width:900px){
+
+    .apartment-selector{
+
+        position:absolute;
+
+        top:50%;
+        left:0;
+        right:0;
+
+        transform:translateY(-50%);
+
+        display:flex;
+
+        flex-direction:row;
+
+        justify-content:flex-start;
+
+        align-items:center;
+
+        gap:24px;
+
+        overflow-x:auto;
+
+        overflow-y:hidden;
+
+        scroll-snap-type:x mandatory;
+
+        -webkit-overflow-scrolling:touch;
+
+        padding:0 calc(50vw - 140px);
+
+        scrollbar-width:none;
+
+    }
+
+    .apartment-selector::-webkit-scrollbar{
+
+        display:none;
+
+    }
+
+    .apartment-card{
+
+        flex:0 0 280px;
+
+        width:280px;
+
+        height:300px;
+
+        scroll-snap-align:center;
+
+    }
+
+    .apartment-card h2{
+
+        font-size:30px;
+
+    }
+
+    .apartment-card span{
+
+        font-size:18px;
+
+    }
+
+    .apartment-card p{
+
+        font-size:14px;
+
+        padding:0 18px;
+
+        text-align:center;
+
+    }
+
+}/*====================================
+FONDO
+====================================*/
+
+.background-image{
+
+    position:absolute;
+
+    inset:0;
+
+    background-size:cover;
+
+    background-position:center;
+
+    background-repeat:no-repeat;
+
+}
