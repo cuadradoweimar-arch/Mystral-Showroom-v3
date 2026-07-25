@@ -7,15 +7,15 @@ export default function Hero({ onExplore }) {
       <div className="hero-card">
 
         <span className="hero-engine">
-          Brosure inmersivo
+          
         </span>
 
         <h2 className="hero-logo">
-          MYSTRAL
+          
         </h2>
 
         <p className="hero-description">
-          Un privilegio reservado para pocos.
+          
         </p>
 
         <button

@@ -1,19 +1,15 @@
 .hero{
 
     position:absolute;
-
     inset:0;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
     z-index:20;
 
     padding:40px;
-
     box-sizing:border-box;
 
     pointer-events:none;
@@ -21,41 +17,37 @@
 }
 
 /*=====================================
-    TARJETA GLASS
+    TARJETA
 ======================================*/
 
-.hero-card{
+.hero-button{
 
-    width:760px;
+    margin-top: 80px;   
 
-    max-width:90%;
+    width:260px;
+    height:68px;
 
-    padding:70px 70px 60px;
+    border-radius:16px;
 
-    border-radius:30px;
+    border:1px solid rgba(255,255,255,.35);
 
-    background:rgba(255,255,255,.08);
+    background:rgba(255,255,255,.10);
 
-    backdrop-filter:blur(26px) saturate(180%);
-    -webkit-backdrop-filter:blur(26px) saturate(180%);
+    backdrop-filter:blur(10px);
 
-    border:1px solid rgba(255,255,255,.18);
+    color:white;
 
-    box-shadow:
-        0 30px 80px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.18);
+    font-size:20px;
 
-    position:relative;
+    letter-spacing:2px;
 
-    overflow:hidden;
+    cursor:pointer;
 
-    text-align:center;
+    transition:.35s;
 
     pointer-events:auto;
 
 }
-
-/* Reflejo */
 
 .hero-card::before{
 
@@ -68,7 +60,6 @@
     border-radius:30px;
 
     background:
-
         linear-gradient(
             135deg,
             rgba(255,255,255,.18),
@@ -129,9 +120,19 @@
 
 }
 
-/*=====================================*/
+/*=====================================
+BOTÓN EXPLORAR
+======================================*/
 
 .hero-button{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:90px;      /* ← Cambia este valor para subir o bajar el botón */
+
+    transform:translateX(-50%);
 
     width:260px;
 
@@ -155,6 +156,8 @@
 
     transition:.35s;
 
+    pointer-events:auto;
+
 }
 
 .hero-button:hover{
@@ -163,17 +166,18 @@
 
     color:#101828;
 
-    transform:translateY(-3px);
+    transform:translateX(-50%) translateY(-3px);
 
     box-shadow:
-
         0 15px 35px rgba(255,255,255,.18);
 
-}/* =====================================
+}
+
+/* =====================================
    HERO RESPONSIVE
 ===================================== */
 
-@media (max-width: 900px) {
+@media (max-width:900px){
 
 .hero{
 
@@ -185,51 +189,17 @@
 
     width:100%;
 
-    max-width:100%;
-
-    padding:45px 30px;
-
-    border-radius:24px;
-
-}
-
-.hero-engine{
-
-    font-size:12px;
-
-    letter-spacing:3px;
-
-    margin-bottom:14px;
-
-}
-
-.hero-logo{
-
-    font-size:58px;
-
-    letter-spacing:5px;
-
-    line-height:1.1;
-
-}
-
-.hero-description{
-
-    margin:20px auto 40px;
-
-    font-size:18px;
-
-    line-height:1.6;
+    height:100%;
 
 }
 
 .hero-button{
 
-    width:100%;
-
-    max-width:280px;
+    width:280px;
 
     height:58px;
+
+    bottom:60px;
 
     font-size:18px;
 
@@ -237,7 +207,7 @@
 
 }
 
-@media (max-width: 480px) {
+@media (max-width:480px){
 
 .hero{
 
@@ -245,43 +215,15 @@
 
 }
 
-.hero-card{
-
-    padding:35px 22px;
-
-    border-radius:20px;
-
-}
-
-.hero-engine{
-
-    font-size:11px;
-
-    letter-spacing:2px;
-
-}
-
-.hero-logo{
-
-    font-size:42px;
-
-    letter-spacing:3px;
-
-}
-
-.hero-description{
-
-    font-size:16px;
-
-    margin:18px auto 30px;
-
-}
-
 .hero-button{
 
-    width:100%;
+    width:90%;
+
+    max-width:280px;
 
     height:54px;
+
+    bottom:40px;
 
     font-size:16px;
 

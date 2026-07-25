@@ -640,15 +640,16 @@ FONDO
 ====================================*/
 
 .background-image{
-
     position:absolute;
-
     inset:0;
 
     background-size:cover;
-
     background-position:center;
-
     background-repeat:no-repeat;
 
+    z-index:9999;
+
+    opacity:1;
+
+    display:block;
 }

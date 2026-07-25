@@ -49,7 +49,8 @@ if (scene === "brochure") {
     location: inicio,
 
 };
-
+console.log(scene);
+console.log(sceneImages[scene]);
     return (
 
         <div className="viewer">
