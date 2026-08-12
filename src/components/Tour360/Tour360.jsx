@@ -15,6 +15,8 @@ import habitacion2 from "../../assets/panoramas/tipo-a/habitacion2.png";
 import wc2 from "../../assets/panoramas/tipo-a/wc2.png";
 import wc1 from "../../assets/panoramas/tipo-a/wc1.png";
 import estarAlcobas from "../../assets/panoramas/tipo-a/estar de alcobas.png";
+import habitacion3 from "../../assets/panoramas/tipo-a/habitacion 3a.jpg";
+import bano3 from "../../assets/panoramas/tipo-a/baño 3a.jpg";
 
 // ======================
 // TIPO B
@@ -26,6 +28,11 @@ import cocinaB from "../../assets/panoramas/tipo-b/cocina.png";
 import habitacionB from "../../assets/panoramas/tipo-b/habitacion.png";
 import balconB from "../../assets/panoramas/tipo-b/balcon.png";
 import balconB2 from "../../assets/panoramas/tipo-b/balcon1.png";
+import bano1B from "../../assets/panoramas/tipo-b/baño 1b.jpg";
+import bano2B from "../../assets/panoramas/tipo-b/baño 2b.jpg";
+import bano3B from "../../assets/panoramas/tipo-b/baño 3b.jpg";
+import habitacion2B from "../../assets/panoramas/tipo-b/habitacion 2B.jpg";
+import habitacion3B from "../../assets/panoramas/tipo-b/habitacion 3B.jpg";
 
 // ======================
 // DÚPLEX
@@ -191,49 +198,54 @@ setTitle("PM 1");
     </button>
 
     <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        BAÑO 1
-    </button>
+    className="menu-item"
+    onClick={() => {
+        setCurrent(bano1B);
+        setTitle("BAÑO 1");
+    }}
+>
+    BAÑO 1
+</button>
 
     <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        HABITACIÓN 2
-    </button>
+    className="menu-item"
+    onClick={() => {
+        setCurrent(habitacion2B);
+        setTitle("HABITACIÓN 2");
+    }}
+>
+    HABITACIÓN 2
+</button>
 
     <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        BAÑO 2
-    </button>
+    className="menu-item"
+    onClick={() => {
+        setCurrent(bano2B);
+        setTitle("BAÑO 2");
+    }}
+>
+    BAÑO 2
+</button>
+
+   <button
+    className="menu-item"
+    onClick={() => {
+        setCurrent(habitacion3B);
+        setTitle("HABITACIÓN 3");
+    }}
+>
+    HABITACIÓN 3
+</button>
 
     <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        HABITACIÓN 3
-    </button>
-
-    <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        BAÑO 3
-    </button>
+    className="menu-item"
+    onClick={() => {
+        setCurrent(bano3B);
+        setTitle("BAÑO 3");
+    }}
+>
+    BAÑO 3
+</button>
 
     <button
         className="menu-item"
@@ -328,22 +340,24 @@ setTitle("PM 1");
     </button>
 
     <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        HABITACIÓN 3
-    </button>
+    className="menu-item"
+    onClick={() => {
+        setCurrent(habitacion3);
+        setTitle("HABITACIÓN 3");
+    }}
+>
+    HABITACIÓN 3
+</button>
 
     <button
-        className="menu-item"
-        onClick={() => {
-            alert("ESPACIO EN DESARROLLO");
-        }}
-    >
-        BAÑO 3
-    </button>
+    className="menu-item"
+    onClick={() => {
+        setCurrent(bano3);
+        setTitle("BAÑO 3");
+    }}
+>
+    BAÑO 3
+</button>
 
     <button
         className="menu-item"
@@ -397,6 +411,18 @@ setTitle("PM 1");
                 ← VOLVER
             </button>
 
+<button
+    className="tour360-fullscreen"
+    onClick={() => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }}
+>
+    ⛶
+</button>
         </div>
 
     );

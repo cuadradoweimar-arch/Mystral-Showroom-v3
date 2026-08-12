@@ -384,4 +384,48 @@
 
     }
 
+}/* ===========================
+   BOTÓN PANTALLA COMPLETA
+=========================== */
+
+.tour360-fullscreen{
+
+    position:absolute;
+
+    right:35px;
+    bottom:35px;
+
+    z-index:500;
+
+    width:52px;
+    height:52px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    background:rgba(255,255,255,.10);
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    color:white;
+
+    font-size:25px;
+    font-weight:300;
+
+    cursor:pointer;
+
+    transition:all .3s ease;
+}
+
+.tour360-fullscreen:hover{
+
+    background:rgba(255,255,255,.20);
+
+    transform:scale(1.08);
 }
