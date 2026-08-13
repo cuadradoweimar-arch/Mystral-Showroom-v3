@@ -27,7 +27,7 @@ export default function Transition({ scene, children }) {
                 }}
 
                 transition={{
-                    duration: 0.40,
+                    duration: 0.24,
                     ease: "easeOut"
                 }}
 

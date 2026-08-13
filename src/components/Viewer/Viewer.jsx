@@ -7,6 +7,7 @@ import hero from "../../assets/images/home/hero.jpg";
 import project from "../../assets/images/project/project.png";
 import inicio from "../../assets/images/location/inicio.jpg";
 import galleryVideo from "../../assets/videos/fachada-trasera.mp4";
+import locationVideo from "../../assets/videos/ubicacion.MP4";
 import apartment from "../../assets/images/apartments/apartment-01.jpg";
 import levels from "../../assets/images/levels/levels.png";
 import apartmentsOverview from "../../assets/images/apartments/apartments-overview.png";
@@ -62,19 +63,24 @@ console.log(sceneImages[scene]);
 
             <Transition scene={scene}>
 
-                {scene === "gallery" ? (
+               {scene === "gallery" || scene === "location" ? (
 
     <div className="layer active">
 
         <video
-            className="layer-video"
-            src={galleryVideo}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-        />
+    className="layer-video"
+    src={scene === "gallery" ? galleryVideo : locationVideo}
+    autoPlay
+    loop={scene === "gallery"}
+    muted
+    playsInline
+    preload="auto"
+    onEnded={() => {
+        if (scene === "location") {
+            setScene("gallery");
+        }
+    }}
+/>
 
     {/* Hotspots eliminados */}
 
