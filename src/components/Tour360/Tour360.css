@@ -56,6 +56,7 @@
     box-shadow:none;
 
 }
+
 /* ===========================
    TÍTULO
 =========================== */
@@ -120,7 +121,9 @@
 
 }
 
-/* EFECTO PREMIUM */
+/* ===========================
+   EFECTO PREMIUM
+=========================== */
 
 .menu-item:hover{
 
@@ -138,6 +141,7 @@
         0 2px 12px rgba(0,0,0,.45);
 
 }
+
 /* ===========================
    BOTÓN VOLVER
 =========================== */
@@ -181,7 +185,13 @@
 
     transform:translateY(-3px);
 
-}.panorama-info{
+}
+
+/* ===========================
+   INFORMACIÓN PANORAMA
+=========================== */
+
+.panorama-info{
 
     position:absolute;
 
@@ -229,7 +239,9 @@
 
     text-transform:uppercase;
 
-}/*==================================
+}
+
+/*==================================
   INDICADOR ARRASTRAR
 ===================================*/
 
@@ -308,50 +320,174 @@
         opacity:0;
     }
 
-}/* =========================================================
+}
+
+/* =========================================================
    MOBILE - TOUR 360
+   MENÚ HORIZONTAL DESLIZABLE
 ========================================================= */
 
 @media (max-width:900px){
 
+    /* =========================
+       FRANJA INFERIOR
+    ========================= */
+
     .tour360-menu{
 
-        top:170px;
-        right:20px;
+        position:absolute;
 
-        left:auto;
+        left:0;
+        right:0;
+        bottom:0;
+        top:auto;
 
         transform:none;
 
-        width:220px;
+        width:100%;
+        height:78px;
 
-        align-items:flex-end;
+        display:block;
+
+        white-space:nowrap;
+
+        padding:0;
+
+        background:rgba(20,20,20,.42);
+
+        backdrop-filter:blur(18px);
+        -webkit-backdrop-filter:blur(18px);
+
+        border-top:1px solid rgba(255,255,255,.16);
+
+        overflow-x:auto;
+        overflow-y:hidden;
+
+        -webkit-overflow-scrolling:touch;
+
+        scrollbar-width:none;
+
+        z-index:400;
 
     }
+
+    /* Ocultar barra de desplazamiento */
+
+    .tour360-menu::-webkit-scrollbar{
+
+        display:none;
+
+    }
+
+
+    /* =========================
+       TÍTULO
+    ========================= */
 
     .tour360-menu h1{
 
-        margin-bottom:30px;
-
-        font-size:26px;
-
-        letter-spacing:6px;
+        display:none;
 
     }
+
+
+    /* =========================
+       OPCIONES
+    ========================= */
 
     .menu-item{
 
-        padding:14px 0;
+        width:auto;
 
-        font-size:14px;
+        min-width:max-content;
+
+        height:78px;
+
+        padding:0 22px;
+
+        display:inline-flex;
+
+        align-items:center;
+        justify-content:center;
+
+        background:transparent;
+
+        border:none;
+
+        border-right:1px solid rgba(255,255,255,.10);
+
+        color:rgba(255,255,255,.82);
+
+        font-size:13px;
+
+        font-weight:300;
 
         letter-spacing:3px;
 
+        text-align:center;
+
+        white-space:nowrap;
+
+        cursor:pointer;
+
+        transition:
+            color .3s ease,
+            background .3s ease,
+            letter-spacing .3s ease;
+
     }
+
+
+    /* =========================
+       ELEMENTO ACTIVO
+    ========================= */
+
+    .menu-item.active{
+
+        color:#ffffff;
+
+        background:rgba(255,255,255,.10);
+
+        border-bottom:2px solid rgba(255,255,255,.85);
+
+    }
+
+
+    /* =========================
+       HOVER
+    ========================= */
+
+    @media (hover:hover) and (pointer:fine){
+
+        .menu-item:hover{
+
+            color:#ffffff;
+
+            background:rgba(255,255,255,.08);
+
+            transform:none;
+
+            letter-spacing:4px;
+
+            border-bottom:1px solid rgba(255,255,255,.65);
+
+            text-shadow:
+                0 0 8px rgba(255,255,255,.35),
+                0 2px 10px rgba(0,0,0,.4);
+
+        }
+
+    }
+
+
+    /* =========================
+       INFORMACIÓN SUPERIOR
+    ========================= */
 
     .panorama-info{
 
         top:60px;
+
         left:25px;
 
     }
@@ -372,19 +508,62 @@
 
     }
 
+
+    /* =========================
+       BOTÓN VOLVER
+    ========================= */
+
     .tour360-back{
 
         left:20px;
 
-        bottom:20px;
+        bottom:95px;
 
-        padding:14px 24px;
+        padding:13px 22px;
 
-        font-size:14px;
+        font-size:13px;
+
+        border-radius:14px;
+
+        z-index:500;
 
     }
 
-}/* ===========================
+
+    /* =========================
+       PANTALLA COMPLETA
+    ========================= */
+
+    .tour360-fullscreen{
+
+        right:20px;
+
+        bottom:95px;
+
+        width:52px;
+
+        height:52px;
+
+        z-index:500;
+
+    }
+
+
+    /* =========================
+       INDICADOR DE ARRASTRE
+    ========================= */
+
+    .drag-indicator{
+
+        bottom:100px;
+
+        z-index:350;
+
+    }
+
+}
+
+/* ===========================
    BOTÓN PANTALLA COMPLETA
 =========================== */
 
@@ -416,11 +595,13 @@
     color:white;
 
     font-size:25px;
+
     font-weight:300;
 
     cursor:pointer;
 
     transition:all .3s ease;
+
 }
 
 .tour360-fullscreen:hover{
@@ -428,4 +609,22 @@
     background:rgba(255,255,255,.20);
 
     transform:scale(1.08);
+
+}
+
+/* =========================================================
+   AJUSTE FINAL MOBILE
+   El botón queda encima de la franja
+========================================================= */
+
+@media (max-width:900px){
+
+    .tour360-fullscreen{
+
+        right:20px;
+
+        bottom:95px;
+
+    }
+
 }
