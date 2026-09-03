@@ -2,7 +2,6 @@ import "./Navbar.css";
 import { useState } from "react";
 
 export default function Navbar({ scene, setScene }) {
-
     const [menuOpen, setMenuOpen] = useState(false);
 
     const items = [
@@ -11,16 +10,14 @@ export default function Navbar({ scene, setScene }) {
         { id: "gallery", label: "VER DISPONIBLE" },
         { id: "apartments", label: "APARTAMENTOS" },
         { id: "levels", label: "NIVELES" },
+        { id: "projects", label: "PROYECTOS" },
         { id: "brochure", label: "BROCHURE" },
     ];
 
-  const changeScene = (id) => {
-
-    setScene(id);
-
-    setMenuOpen(false);
-
-};
+    const changeScene = (id) => {
+        setScene(id);
+        setMenuOpen(false);
+    };
 
     return (
         <>
@@ -32,28 +29,23 @@ export default function Navbar({ scene, setScene }) {
             </button>
 
             <div className={`scene-menu ${menuOpen ? "open" : ""}`}>
-
                 <div className="scene-menu-items">
-
                     {items.map((item) => (
-
                         <button
                             key={item.id}
                             onClick={() => changeScene(item.id)}
-                            className={`scene-item ${scene === item.id ? "active" : ""}`}
+                            className={`scene-item ${
+                                scene === item.id ? "active" : ""
+                            }`}
                         >
                             <span className="scene-text">
                                 {item.label}
                             </span>
 
                             <span className="scene-line"></span>
-
                         </button>
-
                     ))}
-
                 </div>
-
             </div>
         </>
     );
