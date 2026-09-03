@@ -14,21 +14,43 @@ export default function ProjectsMap({ setScene }) {
     const map = useRef(null);
 
     const projects = [
-        {
-            name: "MYSTRAL",
-            city: "Montería",
-            country: "Colombia",
-            coordinates: [-75.871683, 8.780019],
-            scene: "home",
-        },
-        {
-            name: "ARENA",
-            city: "Coveñas",
-            country: "Colombia",
-            coordinates: [-75.663596, 9.410074],
-            scene: null,
-        },
-    ];
+    {
+        name: "MYSTRAL",
+        city: "Montería",
+        country: "Colombia",
+        coordinates: [-75.871683, 8.780019],
+        scene: "home",
+    },
+    {
+        name: "ARENA",
+        city: "Coveñas",
+        country: "Colombia",
+        coordinates: [-75.663596, 9.410074],
+        scene: null,
+    },
+    {
+        name: "LA MAR",
+        city: "Coveñas",
+        country: "Colombia",
+        coordinates: [-75.663983, 9.409490],
+        scene: null,
+    },
+    {
+        name: "IUC",
+        fullName: "Instituto Universitario de Córdoba",
+        city: "Montería",
+        country: "Colombia",
+        coordinates: [-75.864421, 8.788177],
+        scene: null,
+    },
+    {
+        name: "RIVIERA",
+        city: "Montería",
+        country: "Colombia",
+        coordinates: [-75.869249, 8.786343],
+        scene: null,
+    },
+];
 
     useEffect(() => {
         if (map.current) return;
@@ -73,20 +95,11 @@ export default function ProjectsMap({ setScene }) {
 
         map.current.on("load", () => {
             projects.forEach((project) => {
-                const markerElement = document.createElement("div");
-
-                markerElement.className = "project-marker";
-
-                markerElement.innerHTML = `
-                    <div class="project-marker-pulse"></div>
-                    <div class="project-marker-dot"></div>
-                `;
-
                 const popup = new Popup({
                     offset: 25,
                     closeButton: true,
                     closeOnClick: false,
-                    maxWidth: "280px",
+                    maxWidth: "300px",
                 }).setHTML(`
                     <div class="project-popup">
 
@@ -97,6 +110,11 @@ export default function ProjectsMap({ setScene }) {
                         <h2>${project.name}</h2>
 
                         <p>
+                            ${
+                                project.fullName
+                                    ? `${project.fullName}<br />`
+                                    : ""
+                            }
                             ${project.city}<br />
                             ${project.country}
                         </p>
@@ -106,14 +124,14 @@ export default function ProjectsMap({ setScene }) {
                                 ? `
                                     <button
                                         class="project-explore-button"
-                                        data-scene="${project.scene}"
+                                        data-project="${project.name}"
                                     >
                                         EXPLORAR PROYECTO →
                                     </button>
                                 `
                                 : `
                                     <div class="project-coming-soon">
-                                        PRÓXIMAMENTE
+                                        
                                     </div>
                                 `
                         }
@@ -122,17 +140,33 @@ export default function ProjectsMap({ setScene }) {
                 `);
 
                 const marker = new Marker({
-                    element: markerElement,
-                    anchor: "bottom",
+                    color: "#ffffff",
+                    scale: 1.2,
                 })
                     .setLngLat(project.coordinates)
                     .setPopup(popup)
                     .addTo(map.current);
 
+                const markerElement = marker.getElement();
+
+                markerElement.classList.add(
+                    "project-marker-with-label"
+                );
+
+                markerElement.setAttribute(
+                    "data-project-name",
+                    project.name
+                );
+
+                markerElement.setAttribute(
+                    "data-label-position",
+                    project.labelPosition
+                );
+
                 markerElement.addEventListener("click", () => {
                     map.current.flyTo({
                         center: project.coordinates,
-                        zoom: 14,
+                        zoom: 15,
                         speed: 1.2,
                         curve: 1.4,
                         essential: true,
@@ -141,13 +175,13 @@ export default function ProjectsMap({ setScene }) {
 
                 popup.on("open", () => {
                     const button = document.querySelector(
-                        `.project-explore-button[data-scene="${project.scene}"]`
+                        `.project-explore-button[data-project="${project.name}"]`
                     );
 
-                    if (button) {
-                        button.addEventListener("click", () => {
+                    if (button && project.scene) {
+                        button.onclick = () => {
                             setScene(project.scene);
-                        });
+                        };
                     }
                 });
             });
