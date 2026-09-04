@@ -7,6 +7,7 @@ import Hero from "../Hero/Hero";
 import ProjectsMap from "../ProjectsMap/ProjectsMap";
 
 export default function SceneManager() {
+
     const [scene, setScene] = useState("home");
 
     const toggleFullscreen = () => {
@@ -64,7 +65,29 @@ export default function SceneManager() {
                     onExplore={() => setScene("location")}
                 />
             )}
-
+{scene === "home" && (
+    <button
+        onClick={() => setScene("projects")}
+        style={{
+            position: "fixed",
+            right: "1500px",
+            bottom: "45px",
+            zIndex: 2000,
+            padding: "14px 28px",
+            background: "rgba(0,0,0,0.35)",
+            border: "1px solid rgba(255,255,255,0.45)",
+            borderRadius: "30px",
+            color: "#fff",
+            fontFamily: "Montserrat, sans-serif",
+            fontSize: "14px",
+            letterSpacing: "3px",
+            cursor: "pointer",
+            backdropFilter: "blur(12px)"
+        }}
+    >
+        PROYECTOS
+    </button>
+)}
             {scene === "projects" && (
                 <Navbar
                     scene={scene}
