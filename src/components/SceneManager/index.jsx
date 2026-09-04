@@ -7,7 +7,6 @@ import Hero from "../Hero/Hero";
 import ProjectsMap from "../ProjectsMap/ProjectsMap";
 
 export default function SceneManager() {
-
     const [scene, setScene] = useState("home");
 
     const toggleFullscreen = () => {

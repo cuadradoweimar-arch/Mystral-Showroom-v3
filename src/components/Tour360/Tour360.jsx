@@ -4,6 +4,13 @@ import "./Tour360.css";
 import Viewer360, { preloadPanoramas } from "./Viewer360";
 
 // ======================
+// TERRAZA
+// ======================
+
+import terraza from "../../assets/panoramas/terraza/terraza.jpg";
+import terraza2 from "../../assets/panoramas/terraza/terraza2.jpg";
+
+// ======================
 // TIPO A
 // ======================
 
@@ -49,6 +56,11 @@ import PM21 from "../../assets/panoramas/duplex/Sala Estar.png";
 // LISTAS DE PRECARGA
 // ======================
 
+const panoramasTerraza = [
+    terraza,
+    terraza2
+];
+
 const panoramasTipoA = [
     sala,
     cocina,
@@ -91,6 +103,7 @@ export default function Tour360({ scene, setScene }) {
     const [current, setCurrent] = useState(sala);
     const [title, setTitle] = useState("SALA");
 
+    const isTerraza = scene === "project";
     const isDuplex = scene === "duplex";
     const isTypeB = scene === "typeB360";
 
@@ -100,36 +113,41 @@ export default function Tour360({ scene, setScene }) {
 
     useEffect(() => {
 
-        if (scene === "typeA360") {
+        if (scene === "project") {
+            preloadPanoramas(panoramasTerraza);
+        }
 
+        else if (scene === "typeA360") {
             preloadPanoramas(panoramasTipoA);
-
         }
 
         else if (scene === "typeB360") {
-
             preloadPanoramas(panoramasTipoB);
-
         }
 
         else if (scene === "duplex") {
-
             preloadPanoramas(panoramasDuplex);
-
         }
 
     }, [scene]);
 
     // =========================================================
-    // PANORAMA INICIAL SEGÚN EL APARTAMENTO
+    // PANORAMA INICIAL
     // =========================================================
 
     useEffect(() => {
 
-        if (scene === "duplex") {
+        if (scene === "project") {
+
+            setCurrent(terraza);
+            setTitle("TERRAZA");
+
+        }
+
+        else if (scene === "duplex") {
 
             setCurrent(PM1);
-            setTitle("PM 1");
+            setTitle("ENTRADA");
 
         }
 
@@ -150,10 +168,89 @@ export default function Tour360({ scene, setScene }) {
     }, [scene]);
 
     // =========================================================
-    // MOSTRAR TOUR 360 ÚNICAMENTE EN ESTAS ESCENAS
+    // HOTSPOTS
+    // =========================================================
+
+    const hotspots = [];
+
+    // =========================================================
+    // TERRAZA → TERRAZA 2
+    // =========================================================
+
+    if (scene === "project" && current === terraza) {
+
+        hotspots.push({
+            position: [-3.0, -2.2, -0.05],
+            label: "TERRAZA 2",
+            onClick: () => {
+                setCurrent(terraza2);
+                setTitle("TERRAZA 2");
+            }
+        });
+
+    }
+
+    // =========================================================
+    // TERRAZA 2 → TERRAZA
+    // =========================================================
+
+    if (scene === "project" && title === "TERRAZA 2") {
+
+        hotspots.push({
+            position: [-2, -2, -0.01],
+            label: "TERRAZA",
+            onClick: () => {
+                setCurrent(terraza);
+                setTitle("TERRAZA");
+            }
+        });
+
+    }
+
+    // =========================================================
+    // TIPO A
+    // =========================================================
+
+    // ---------------------------------------------------------
+    // SALA → COCINA
+    // ---------------------------------------------------------
+
+    if (scene === "typeA360" && current === sala) {
+
+        hotspots.push({
+            position: [-4.5, -2.0, 3],
+            label: "COCINA",
+            onClick: () => {
+                setCurrent(cocina);
+                setTitle("COCINA");
+            }
+        });
+
+    }
+
+    // ---------------------------------------------------------
+    // COCINA → SALA
+    // ---------------------------------------------------------
+
+    if (scene === "typeA360" && current === cocina) {
+
+        hotspots.push({
+            position: [-5, -1.5, 1],
+            label: "SALA",
+            onClick: () => {
+                setCurrent(sala);
+                setTitle("SALA");
+            }
+        });
+
+    }
+
+    // =========================================================
+    // MOSTRAR TOUR 360
     // =========================================================
 
     if (
+        scene !== "project" &&
         scene !== "typeA360" &&
         scene !== "typeB360" &&
         scene !== "duplex"
@@ -173,7 +270,9 @@ export default function Tour360({ scene, setScene }) {
 
                 <span className="panorama-apartment">
 
-                    {isDuplex
+                    {isTerraza
+                        ? "MYSTRAL"
+                        : isDuplex
                         ? "Apartamento Dúplex"
                         : isTypeB
                         ? "Apartamento Tipo B"
@@ -191,311 +290,318 @@ export default function Tour360({ scene, setScene }) {
                 MENÚ
             ========================== */}
 
-            <div className="tour360-menu">
+            {!isTerraza && (
 
-                {isDuplex ? (
+                <div className="tour360-menu">
 
-                    <>
-                        <button
-                            onClick={() => {
-                                setCurrent(PM1);
-                                setTitle("ENTRADA");
-                            }}
-                            className="menu-item"
-                        >
-                            ENTRADA
-                        </button>
+                    {isDuplex ? (
 
-                        <button
-                            onClick={() => {
-                                setCurrent(PM3);
-                                setTitle("COMEDOR");
-                            }}
-                            className="menu-item"
-                        >
-                            COMEDOR
-                        </button>
+                        <>
+                            <button
+                                onClick={() => {
+                                    setCurrent(PM1);
+                                    setTitle("ENTRADA");
+                                }}
+                                className="menu-item"
+                            >
+                                ENTRADA
+                            </button>
 
-                        <button
-                            onClick={() => {
-                                setCurrent(PM5);
-                                setTitle("MUEBLES");
-                            }}
-                            className="menu-item"
-                        >
-                            MUEBLES
-                        </button>
+                            <button
+                                onClick={() => {
+                                    setCurrent(PM3);
+                                    setTitle("COMEDOR");
+                                }}
+                                className="menu-item"
+                            >
+                                COMEDOR
+                            </button>
 
-                        <button
-                            onClick={() => {
-                                setCurrent(PM6);
-                                setTitle("SALA");
-                            }}
-                            className="menu-item"
-                        >
-                            SALA
-                        </button>
+                            <button
+                                onClick={() => {
+                                    setCurrent(PM5);
+                                    setTitle("MUEBLES");
+                                }}
+                                className="menu-item"
+                            >
+                                MUEBLES
+                            </button>
 
-                        <button
-                            onClick={() => {
-                                setCurrent(PM7);
-                                setTitle("BALCÓN");
-                            }}
-                            className="menu-item"
-                        >
-                            BALCÓN
-                        </button>
+                            <button
+                                onClick={() => {
+                                    setCurrent(PM6);
+                                    setTitle("SALA");
+                                }}
+                                className="menu-item"
+                            >
+                                SALA
+                            </button>
 
-                        <button
-                            onClick={() => {
-                                setCurrent(PM21);
-                                setTitle("SALA DE ESTAR");
-                            }}
-                            className="menu-item"
-                        >
-                            SALA DE ESTAR
-                        </button>
-                    </>
+                            <button
+                                onClick={() => {
+                                    setCurrent(PM7);
+                                    setTitle("BALCÓN");
+                                }}
+                                className="menu-item"
+                            >
+                                BALCÓN
+                            </button>
 
-                ) : isTypeB ? (
+                            <button
+                                onClick={() => {
+                                    setCurrent(PM21);
+                                    setTitle("SALA DE ESTAR");
+                                }}
+                                className="menu-item"
+                            >
+                                SALA DE ESTAR
+                            </button>
+                        </>
 
-                    <>
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(salaB);
-                                setTitle("SALA");
-                            }}
-                        >
-                            SALA
-                        </button>
+                    ) : isTypeB ? (
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(comedorB);
-                                setTitle("COMEDOR");
-                            }}
-                        >
-                            COMEDOR
-                        </button>
+                        <>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(salaB);
+                                    setTitle("SALA");
+                                }}
+                            >
+                                SALA
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(cocinaB);
-                                setTitle("COCINA");
-                            }}
-                        >
-                            COCINA
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(comedorB);
+                                    setTitle("COMEDOR");
+                                }}
+                            >
+                                COMEDOR
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(habitacionB);
-                                setTitle("HABITACIÓN");
-                            }}
-                        >
-                            HABITACIÓN
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(cocinaB);
+                                    setTitle("COCINA");
+                                }}
+                            >
+                                COCINA
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(balconB2);
-                                setTitle("BALCÓN 1");
-                            }}
-                        >
-                            BALCÓN 1
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(habitacionB);
+                                    setTitle("HABITACIÓN");
+                                }}
+                            >
+                                HABITACIÓN
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(bano1B);
-                                setTitle("BAÑO 1");
-                            }}
-                        >
-                            BAÑO 1
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(balconB2);
+                                    setTitle("BALCÓN 1");
+                                }}
+                            >
+                                BALCÓN 1
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(habitacion2B);
-                                setTitle("HABITACIÓN 2");
-                            }}
-                        >
-                            HABITACIÓN 2
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(bano1B);
+                                    setTitle("BAÑO 1");
+                                }}
+                            >
+                                BAÑO 1
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(bano2B);
-                                setTitle("BAÑO 2");
-                            }}
-                        >
-                            BAÑO 2
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(habitacion2B);
+                                    setTitle("HABITACIÓN 2");
+                                }}
+                            >
+                                HABITACIÓN 2
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(habitacion3B);
-                                setTitle("HABITACIÓN 3");
-                            }}
-                        >
-                            HABITACIÓN 3
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(bano2B);
+                                    setTitle("BAÑO 2");
+                                }}
+                            >
+                                BAÑO 2
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(bano3B);
-                                setTitle("BAÑO 3");
-                            }}
-                        >
-                            BAÑO 3
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(habitacion3B);
+                                    setTitle("HABITACIÓN 3");
+                                }}
+                            >
+                                HABITACIÓN 3
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(balconB);
-                                setTitle("BALCÓN");
-                            }}
-                        >
-                            BALCÓN
-                        </button>
-                    </>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(bano3B);
+                                    setTitle("BAÑO 3");
+                                }}
+                            >
+                                BAÑO 3
+                            </button>
 
-                ) : (
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(balconB);
+                                    setTitle("BALCÓN");
+                                }}
+                            >
+                                BALCÓN
+                            </button>
+                        </>
 
-                    <>
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(sala);
-                                setTitle("SALA");
-                            }}
-                        >
-                            SALA
-                        </button>
+                    ) : (
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(cocina);
-                                setTitle("COCINA");
-                            }}
-                        >
-                            COCINA
-                        </button>
+                        <>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(sala);
+                                    setTitle("SALA");
+                                }}
+                            >
+                                SALA
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(estarAlcobas);
-                                setTitle("ESTAR DE ALCOBAS");
-                            }}
-                        >
-                            ESTAR DE ALCOBAS
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(cocina);
+                                    setTitle("COCINA");
+                                }}
+                            >
+                                COCINA
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(habitacion);
-                                setTitle("HABITACIÓN PRINCIPAL");
-                            }}
-                        >
-                            HABITACIÓN PRINCIPAL
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(estarAlcobas);
+                                    setTitle("ESTAR DE ALCOBAS");
+                                }}
+                            >
+                                ESTAR DE ALCOBAS
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(balconB2);
-                                setTitle("BALCÓN 2");
-                            }}
-                        >
-                            BALCÓN 2
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(habitacion);
+                                    setTitle("HABITACIÓN PRINCIPAL");
+                                }}
+                            >
+                                HABITACIÓN PRINCIPAL
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(wc1);
-                                setTitle("BAÑO 1");
-                            }}
-                        >
-                            BAÑO 1
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(balconB2);
+                                    setTitle("BALCÓN 2");
+                                }}
+                            >
+                                BALCÓN 2
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(habitacion2);
-                                setTitle("HABITACIÓN 2");
-                            }}
-                        >
-                            HABITACIÓN 2
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(wc1);
+                                    setTitle("BAÑO 1");
+                                }}
+                            >
+                                BAÑO 1
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(wc2);
-                                setTitle("BAÑO 2");
-                            }}
-                        >
-                            BAÑO 2
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(habitacion2);
+                                    setTitle("HABITACIÓN 2");
+                                }}
+                            >
+                                HABITACIÓN 2
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(habitacion3);
-                                setTitle("HABITACIÓN 3");
-                            }}
-                        >
-                            HABITACIÓN 3
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(wc2);
+                                    setTitle("BAÑO 2");
+                                }}
+                            >
+                                BAÑO 2
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(bano3);
-                                setTitle("BAÑO 3");
-                            }}
-                        >
-                            BAÑO 3
-                        </button>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(habitacion3);
+                                    setTitle("HABITACIÓN 3");
+                                }}
+                            >
+                                HABITACIÓN 3
+                            </button>
 
-                        <button
-                            className="menu-item"
-                            onClick={() => {
-                                setCurrent(balcon);
-                                setTitle("BALCÓN");
-                            }}
-                        >
-                            BALCÓN
-                        </button>
-                    </>
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(bano3);
+                                    setTitle("BAÑO 3");
+                                }}
+                            >
+                                BAÑO 3
+                            </button>
 
-                )}
+                            <button
+                                className="menu-item"
+                                onClick={() => {
+                                    setCurrent(balcon);
+                                    setTitle("BALCÓN");
+                                }}
+                            >
+                                BALCÓN
+                            </button>
+                        </>
 
-            </div>
+                    )}
+
+                </div>
+
+            )}
 
             {/* =========================
-                VISOR
+                VISOR 360
             ========================== */}
 
             <div className="tour360-viewer">
 
-                <Viewer360 image={current} />
+                <Viewer360
+                    image={current}
+                    hotspots={hotspots}
+                />
 
             </div>
 
@@ -552,5 +658,4 @@ export default function Tour360({ scene, setScene }) {
         </div>
 
     );
-
 }
