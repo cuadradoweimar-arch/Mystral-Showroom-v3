@@ -244,7 +244,103 @@ export default function Tour360({ scene, setScene }) {
         });
 
     }
+    // ---------------------------------------------------------
+// COCINA → ESTAR DE ALCOBAS
+// ---------------------------------------------------------
 
+if (scene === "typeA360" && current === cocina) {
+
+    hotspots.push({
+        position: [0.05, -2.0, -6],
+        label: "ESTAR DE ALCOBAS",
+        onClick: () => {
+            setCurrent(estarAlcobas);
+            setTitle("ESTAR DE ALCOBAS");
+        }
+    });
+
+}
+// ---------------------------------------------------------
+// ESTAR DE ALCOBAS → COCINA
+// ---------------------------------------------------------
+
+if (scene === "typeA360" && current === estarAlcobas) {
+
+    hotspots.push({
+        position: [1.0, -2.0, 0.5],
+        label: "COCINA",
+        onClick: () => {
+            setCurrent(cocina);
+            setTitle("COCINA");
+        }
+    });
+
+}
+// ---------------------------------------------------------
+// ESTAR DE ALCOBAS → HABITACIÓN 2
+// ---------------------------------------------------------
+
+if (scene === "typeA360" && current === estarAlcobas) {
+
+    hotspots.push({
+        position: [-6.0, -2.0, -0.05],
+        label: "HABITACIÓN 2",
+        onClick: () => {
+            setCurrent(habitacion2);
+            setTitle("HABITACIÓN 2");
+        }
+    });
+
+}
+// ---------------------------------------------------------
+// HABITACIÓN 2 → BAÑO 2
+// ---------------------------------------------------------
+
+if (scene === "typeA360" && current === habitacion2) {
+
+    hotspots.push({
+        position: [-6.0, -2.0, 0.1],
+        label: "BAÑO 2",
+        onClick: () => {
+            setCurrent(wc2);
+            setTitle("BAÑO 2");
+        }
+    });
+
+}
+// ---------------------------------------------------------
+// SALA → BALCÓN
+// ---------------------------------------------------------
+
+if (scene === "typeA360" && current === sala) {
+
+    hotspots.push({
+        position: [5, -3.0, -3],
+        label: "BAL4ÓN",
+        onClick: () => {
+            setCurrent(balcon);
+            setTitle("BALCÓN");
+        }
+    });
+
+    
+}
+// ---------------------------------------------------------
+// BALCÓN → SALA
+// ---------------------------------------------------------
+
+if (scene === "typeA360" && current === balcon) {
+
+    hotspots.push({
+        position: [3.0, -2.0, 0.5],
+        label: "SALA",
+        onClick: () => {
+            setCurrent(sala);
+            setTitle("SALA");
+        }
+    });
+
+}
     // =========================================================
     // MOSTRAR TOUR 360
     // =========================================================
