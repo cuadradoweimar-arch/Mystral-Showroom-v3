@@ -6,6 +6,7 @@ import Transition from "../Transition/Transition";
 import hero from "../../assets/images/home/hero.jpg";
 import project from "../../assets/images/project/project.png";
 import inicio from "../../assets/images/location/inicio.jpg";
+import levelsSvg from "../../assets/images/levels/niveles.svg?raw";
 import galleryVideo from "../../assets/videos/fachada-trasera.mp4";
 import locationVideo from "../../assets/videos/ubicacion.MP4";
 import apartment from "../../assets/images/apartments/apartment-01.jpg";
@@ -16,7 +17,7 @@ import Brochure from "../../views/Brochure/Brochure";
 export default function Viewer({ scene, setScene }) {
 
     const [panelOpen, setPanelOpen] = useState(false);
-
+    const [selectedLevel, setSelectedLevel] = useState(null);
     useEffect(() => {
         // Al entrar en las pantallas de niveles, el panel debe iniciar oculto
         if (scene === "levels" || scene === "apartmentsOverview") {
@@ -82,6 +83,36 @@ console.log(sceneImages[scene]);
     }}
 />
 
+<div
+    className="levels-overlay"
+    onClick={(e) => {
+    const path = e.target.closest("path");
+
+    if (!path) return;
+
+    const paths = Array.from(
+        e.currentTarget.querySelectorAll("path")
+    );
+
+    const index = paths.indexOf(path);
+
+    // Quitar selección anterior
+    paths.forEach((item) => {
+        item.classList.remove("selected");
+    });
+
+    // Marcar solamente el apartamento seleccionado
+    path.classList.add("selected");
+
+    setSelectedLevel(index);
+}}
+    dangerouslySetInnerHTML={{
+        __html: levelsSvg.replace(
+            'preserveAspectRatio="xMidYMid slice"',
+            'preserveAspectRatio="none"'
+        )
+    }}
+/>
     {/* Hotspots eliminados */}
 
     </div>
@@ -105,7 +136,32 @@ console.log(sceneImages[scene]);
                 )}
 
             </Transition>
+{selectedLevel !== null && (
+    <div className="level-card">
+        <button
+            className="level-card-close"
+            onClick={() => setSelectedLevel(null)}
+        >
+            ×
+        </button>
 
+        <span className="level-card-label">
+            NIVEL
+        </span>
+
+        <h2>
+            {selectedLevel + 1}
+        </h2>
+
+        <p>
+            Información del apartamento
+        </p>
+
+        <strong>
+            Disponible
+        </strong>
+    </div>
+)}
             {/* =====================================
                     PANEL EXPLORAR
             ====================================== */}
