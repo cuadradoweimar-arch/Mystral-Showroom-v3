@@ -1,0 +1,16 @@
+{
+  "name": "Mystral Showroom",
+  "short_name": "Mystral",
+  "description": "Showroom interactivo del proyecto residencial Mystral.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/icons/mystral-icon.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
