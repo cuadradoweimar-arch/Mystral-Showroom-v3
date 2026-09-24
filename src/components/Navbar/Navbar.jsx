@@ -4,15 +4,16 @@ import { useState } from "react";
 export default function Navbar({ scene, setScene }) {
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const items = [
-        { id: "home", label: "INICIO" },
-        { id: "project", label: "TERRAZA" },
-        { id: "gallery", label: "VER DISPONIBLE" },
-        { id: "apartments", label: "APARTAMENTOS" },
-        { id: "levels", label: "NIVELES" },
-        { id: "projects", label: "PROYECTOS" },
-        { id: "brochure", label: "BROCHURE" },
-    ];
+   const items = [
+    { id: "home", label: "INICIO" },
+    { id: "ingreso", label: "INGRESO" },
+    { id: "project", label: "TERRAZA" },
+    { id: "gallery", label: "VER DISPONIBLE" },
+    { id: "apartments", label: "APARTAMENTOS" },
+    { id: "levels", label: "NIVELES" },
+    { id: "projects", label: "PROYECTOS" },
+    { id: "brochure", label: "BROCHURE" },
+];
 
     const changeScene = (id) => {
         setScene(id);

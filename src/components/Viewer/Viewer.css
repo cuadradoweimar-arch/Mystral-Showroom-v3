@@ -812,3 +812,33 @@ FONDO
 .level-card-close:hover {
     opacity: 1;
 }
+/* =====================================
+   FLECHA FACHADA TRASERA
+===================================== */
+
+.facade-arrow {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 52px;
+    height: 52px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(20, 65, 85, 0.9);
+    color: white;
+
+    font-size: 36px;
+    font-weight: 300;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+
+    cursor: pointer;
+}

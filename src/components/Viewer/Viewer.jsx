@@ -7,12 +7,14 @@ import hero from "../../assets/images/home/hero.jpg";
 import project from "../../assets/images/project/project.png";
 import inicio from "../../assets/images/location/inicio.jpg";
 import levelsSvg from "../../assets/images/levels/niveles.svg?raw";
+import homeLoop from "../../assets/videos/home-loop.mp4";
 import galleryVideo from "../../assets/videos/fachada-trasera.mp4";
 import locationVideo from "../../assets/videos/ubicacion.MP4";
 import apartment from "../../assets/images/apartments/apartment-01.jpg";
 import levels from "../../assets/images/levels/levels.png";
 import apartmentsOverview from "../../assets/images/apartments/apartments-overview.png";
 import Brochure from "../../views/Brochure/Brochure";
+import ingresoVideo from "../../assets/videos/ingreso.mp4";
 
 export default function Viewer({ scene, setScene }) {
 
@@ -64,25 +66,97 @@ console.log(sceneImages[scene]);
 
             <Transition scene={scene}>
 
-               {scene === "gallery" || scene === "location" ? (
+               {scene === "home" || scene === "ingreso" || scene === "gallery" || scene === "location" ? (
 
     <div className="layer active">
 
-        <video
-    className="layer-video"
-    src={scene === "gallery" ? galleryVideo : locationVideo}
-    autoPlay
-    loop={scene === "gallery"}
-    muted
-    playsInline
-    preload="auto"
-    onEnded={() => {
-        if (scene === "location") {
-            setScene("gallery");
-        }
-    }}
-/>
+        <Transition scene={scene}>
 
+    {scene === "home" || scene === "ingreso" || scene === "gallery" || scene === "location" ? (
+
+        <div className="layer active">
+
+            <video
+                className="layer-video"
+                src={
+    scene === "home"
+        ? homeLoop
+        : scene === "ingreso"
+            ? ingresoVideo
+            : scene === "gallery"
+                ? galleryVideo
+                : locationVideo
+}
+                autoPlay
+                loop={scene === "home" || scene === "gallery"}
+                muted
+                playsInline
+                preload="auto"
+                onEnded={() => {
+                    if (scene === "location") {
+                        setScene("gallery");
+                    }
+                }}
+            />
+
+            <div
+                className="levels-overlay"
+                onClick={(e) => {
+                    const path = e.target.closest("path");
+
+                    if (!path) return;
+
+                    const paths = Array.from(
+                        e.currentTarget.querySelectorAll("path")
+                    );
+
+                    const index = paths.indexOf(path);
+
+                    paths.forEach((item) => {
+                        item.classList.remove("selected");
+                    });
+
+                    path.classList.add("selected");
+
+                    setSelectedLevel(index);
+                }}
+                dangerouslySetInnerHTML={{
+                    __html: levelsSvg.replace(
+                        'preserveAspectRatio="xMidYMid slice"',
+                        'preserveAspectRatio="none"'
+                    )
+                }}
+            />
+
+        </div>
+
+    ) : (
+
+        <div className="layer active">
+
+            <div
+                className="background-image"
+                style={{
+                    backgroundImage: sceneImages[scene]
+                        ? `url(${sceneImages[scene]})`
+                        : "none"
+                }}
+            />
+
+        </div>
+
+    )}
+
+</Transition>
+
+{scene === "gallery" && (
+    <button
+        className="facade-arrow"
+        aria-label="Fachada trasera"
+    >
+        ‹
+    </button>
+)}
 <div
     className="levels-overlay"
     onClick={(e) => {
