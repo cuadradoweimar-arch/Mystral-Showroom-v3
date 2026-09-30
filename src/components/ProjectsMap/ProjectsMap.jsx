@@ -14,43 +14,44 @@ export default function ProjectsMap({ setScene }) {
     const map = useRef(null);
 
     const projects = [
-    {
-        name: "MYSTRAL",
-        city: "Montería",
-        country: "Colombia",
-        coordinates: [-75.871683, 8.780019],
-        scene: "home",
-    },
-    {
-        name: "ARENA",
-        city: "Coveñas",
-        country: "Colombia",
-        coordinates: [-75.663596, 9.410074],
-        scene: null,
-    },
-    {
-        name: "LA MAR",
-        city: "Coveñas",
-        country: "Colombia",
-        coordinates: [-75.663983, 9.409490],
-        scene: null,
-    },
-    {
-        name: "IUC",
-        fullName: "Instituto Universitario de Córdoba",
-        city: "Montería",
-        country: "Colombia",
-        coordinates: [-75.864421, 8.788177],
-        scene: null,
-    },
-    {
-        name: "RIVIERA",
-        city: "Montería",
-        country: "Colombia",
-        coordinates: [-75.869249, 8.786343],
-        scene: null,
-    },
-];
+        {
+            name: "MYSTRAL",
+            city: "Montería",
+            country: "Colombia",
+            coordinates: [-75.871683, 8.780019],
+            scene: "home",
+        },
+        {
+            name: "ARENA",
+            city: "Coveñas",
+            country: "Colombia",
+            coordinates: [-75.663596, 9.410074],
+            scene: null,
+            url: "https://arena-showroom-rho.vercel.app/",
+        },
+        {
+            name: "LA MAR",
+            city: "Coveñas",
+            country: "Colombia",
+            coordinates: [-75.663983, 9.409490],
+            scene: null,
+        },
+        {
+            name: "IUC",
+            fullName: "Instituto Universitario de Córdoba",
+            city: "Montería",
+            country: "Colombia",
+            coordinates: [-75.864421, 8.788177],
+            scene: null,
+        },
+        {
+            name: "RIVIERA",
+            city: "Montería",
+            country: "Colombia",
+            coordinates: [-75.869249, 8.786343],
+            scene: null,
+        },
+    ];
 
     useEffect(() => {
         if (map.current) return;
@@ -120,7 +121,16 @@ export default function ProjectsMap({ setScene }) {
                         </p>
 
                         ${
-                            project.scene
+                            project.url
+                                ? `
+                                    <button
+                                        class="project-explore-button"
+                                        data-project="${project.name}"
+                                    >
+                                        EXPLORAR PROYECTO →
+                                    </button>
+                                `
+                                : project.scene
                                 ? `
                                     <button
                                         class="project-explore-button"
@@ -177,6 +187,12 @@ export default function ProjectsMap({ setScene }) {
                     const button = document.querySelector(
                         `.project-explore-button[data-project="${project.name}"]`
                     );
+
+                    if (button && project.url) {
+                        button.onclick = () => {
+                            window.location.href = project.url;
+                        };
+                    }
 
                     if (button && project.scene) {
                         button.onclick = () => {
