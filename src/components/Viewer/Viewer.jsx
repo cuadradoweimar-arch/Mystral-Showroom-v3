@@ -1,5 +1,4 @@
 import "./Viewer.css";
-
 import { useState, useEffect } from "react";
 import Transition from "../Transition/Transition";
 
@@ -7,300 +6,273 @@ import hero from "../../assets/images/home/hero.jpg";
 import project from "../../assets/images/project/project.png";
 import inicio from "../../assets/images/location/inicio.jpg";
 import levelsSvg from "../../assets/images/levels/niveles.svg?raw";
+
 import homeLoop from "../../assets/videos/home-loop.mp4";
 import galleryVideo from "../../assets/videos/fachada-trasera.mp4";
 import locationVideo from "../../assets/videos/ubicacion.MP4";
+import ingresoVideo from "../../assets/videos/ingreso.mp4";
+
 import apartment from "../../assets/images/apartments/apartment-01.jpg";
 import levels from "../../assets/images/levels/levels.png";
 import apartmentsOverview from "../../assets/images/apartments/apartments-overview.png";
+
 import Brochure from "../../views/Brochure/Brochure";
-import ingresoVideo from "../../assets/videos/ingreso.mp4";
 
 export default function Viewer({ scene, setScene }) {
-
     const [panelOpen, setPanelOpen] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState(null);
+
+    // Al entrar en las pantallas de niveles,
+    // el panel debe iniciar oculto
     useEffect(() => {
-        // Al entrar en las pantallas de niveles, el panel debe iniciar oculto
         if (scene === "levels" || scene === "apartmentsOverview") {
             setPanelOpen(false);
         }
     }, [scene]);
-    // Ocultar Viewer cuando se abre el Tour 360
-if (scene === "typeA360" || scene === "typeB360") {
-    return null;
-}
 
-// Mostrar únicamente el brochure
-if (scene === "brochure") {
-    return <Brochure setScene={setScene} />;
-}
+    // Ocultar Viewer cuando se abre el Tour 360
+    if (scene === "typeA360" || scene === "typeB360") {
+        return null;
+    }
+
+    // Mostrar únicamente el brochure
+    if (scene === "brochure") {
+        return <Brochure setScene={setScene} />;
+    }
 
     const sceneImages = {
+        home: hero,
+        project: project,
+        gallery: null,
+        apartments: apartment,
+        apartmentsOverview: apartmentsOverview,
+        levels: levels,
+        location: inicio,
+    };
 
-    home: hero,
+    console.log(scene);
+    console.log(sceneImages[scene]);
 
-    project: project,
-
-    gallery: null,
-
-    apartments: apartment,
-
-    apartmentsOverview: apartmentsOverview,
-
-    levels: levels,
-
-    location: inicio,
-
-};
-console.log(scene);
-console.log(sceneImages[scene]);
     return (
-
         <div className="viewer">
-            
 
-            {/* ===========================
-                TRANSICIÓN CINEMATOGRÁFICA
-            ============================ */}
+            {/* =====================================
+                    TRANSICIÓN CINEMATOGRÁFICA
+                ====================================== */}
 
             <Transition scene={scene}>
 
-               {scene === "home" || scene === "ingreso" || scene === "gallery" || scene === "location" ? (
+                {/* =====================================
+                        ESCENAS CON VIDEO
+                    ====================================== */}
 
-    <div className="layer active">
-
-        <Transition scene={scene}>
-
-    {scene === "home" || scene === "ingreso" || scene === "gallery" || scene === "location" ? (
-
-        <div className="layer active">
-
-            <video
-                className="layer-video"
-                src={
-    scene === "home"
-        ? homeLoop
-        : scene === "ingreso"
-            ? ingresoVideo
-            : scene === "gallery"
-                ? galleryVideo
-                : locationVideo
-}
-                autoPlay
-                loop={scene === "home" || scene === "gallery"}
-                muted
-                playsInline
-                preload="auto"
-                onEnded={() => {
-                    if (scene === "location") {
-                        setScene("gallery");
-                    }
-                }}
-            />
-
-            <div
-                className="levels-overlay"
-                onClick={(e) => {
-                    const path = e.target.closest("path");
-
-                    if (!path) return;
-
-                    const paths = Array.from(
-                        e.currentTarget.querySelectorAll("path")
-                    );
-
-                    const index = paths.indexOf(path);
-
-                    paths.forEach((item) => {
-                        item.classList.remove("selected");
-                    });
-
-                    path.classList.add("selected");
-
-                    setSelectedLevel(index);
-                }}
-                dangerouslySetInnerHTML={{
-                    __html: levelsSvg.replace(
-                        'preserveAspectRatio="xMidYMid slice"',
-                        'preserveAspectRatio="none"'
-                    )
-                }}
-            />
-
-        </div>
-
-    ) : (
-
-        <div className="layer active">
-
-            <div
-                className="background-image"
-                style={{
-                    backgroundImage: sceneImages[scene]
-                        ? `url(${sceneImages[scene]})`
-                        : "none"
-                }}
-            />
-
-        </div>
-
-    )}
-
-</Transition>
-
-{scene === "gallery" && (
-    <button
-        className="facade-arrow"
-        aria-label="Fachada trasera"
-    >
-        ‹
-    </button>
-)}
-<div
-    className="levels-overlay"
-    onClick={(e) => {
-    const path = e.target.closest("path");
-
-    if (!path) return;
-
-    const paths = Array.from(
-        e.currentTarget.querySelectorAll("path")
-    );
-
-    const index = paths.indexOf(path);
-
-    // Quitar selección anterior
-    paths.forEach((item) => {
-        item.classList.remove("selected");
-    });
-
-    // Marcar solamente el apartamento seleccionado
-    path.classList.add("selected");
-
-    setSelectedLevel(index);
-}}
-    dangerouslySetInnerHTML={{
-        __html: levelsSvg.replace(
-            'preserveAspectRatio="xMidYMid slice"',
-            'preserveAspectRatio="none"'
-        )
-    }}
-/>
-    {/* Hotspots eliminados */}
-
-    </div>
-
-) : (
+                {scene === "home" ||
+                scene === "ingreso" ||
+                scene === "gallery" ||
+                scene === "location" ? (
 
                     <div className="layer active">
 
-    <div
-        className="background-image"
-        style={{
-            backgroundImage: sceneImages[scene]
-                ? `url(${sceneImages[scene]})`
-                : "none"
-        }}
-    />
+                        <video
+                            className="layer-video"
+                            src={
+                                scene === "home"
+                                    ? homeLoop
+                                    : scene === "ingreso"
+                                        ? ingresoVideo
+                                        : scene === "gallery"
+                                            ? galleryVideo
+                                            : locationVideo
+                            }
+                            autoPlay
+                            loop={
+                                scene === "home" ||
+                                scene === "gallery"
+                            }
+                            muted
+                            playsInline
+                            preload="auto"
+                            onEnded={() => {
+                                if (scene === "location") {
+                                    setScene("gallery");
+                                }
+                            }}
+                        />
 
+                        {/* =====================================
+                                OVERLAY DE NIVELES
+                                SOLO EN FACHADA TRASERA
+                                scene === "gallery"
+                            ====================================== */}
 
-</div>
+                        {scene === "gallery" && (
+                            <div
+                                className="levels-overlay"
+                                onClick={(e) => {
+                                    const path =
+                                        e.target.closest("path");
 
+                                    if (!path) return;
+
+                                    const paths = Array.from(
+                                        e.currentTarget.querySelectorAll(
+                                            "path"
+                                        )
+                                    );
+
+                                    const index =
+                                        paths.indexOf(path);
+
+                                    paths.forEach((item) => {
+                                        item.classList.remove(
+                                            "selected"
+                                        );
+                                    });
+
+                                    path.classList.add("selected");
+
+                                    setSelectedLevel(index);
+                                }}
+                                dangerouslySetInnerHTML={{
+                                    __html: levelsSvg.replace(
+                                        'preserveAspectRatio="xMidYMid slice"',
+                                        'preserveAspectRatio="none"'
+                                    ),
+                                }}
+                            />
+                        )}
+
+                    </div>
+
+                ) : (
+
+                    /* =====================================
+                            ESCENAS CON IMAGEN
+                        ====================================== */
+
+                    <div className="layer active">
+
+                        <div
+                            className="background-image"
+                            style={{
+                                backgroundImage:
+                                    sceneImages[scene]
+                                        ? `url(${sceneImages[scene]})`
+                                        : "none",
+                            }}
+                        />
+
+                    </div>
                 )}
 
             </Transition>
-{selectedLevel !== null && (
-    <div className="level-card">
-        <button
-            className="level-card-close"
-            onClick={() => setSelectedLevel(null)}
-        >
-            ×
-        </button>
 
-        <span className="level-card-label">
-            NIVEL
-        </span>
+            {/* =====================================
+                    FLECHA FACHADA TRASERA
+                    SOLO EN GALLERY
+                ====================================== */}
 
-        <h2>
-            {selectedLevel + 1}
-        </h2>
+            {scene === "gallery" && (
+                <button
+                    className="facade-arrow"
+                    aria-label="Fachada trasera"
+                >
+                    ‹
+                </button>
+            )}
 
-        <p>
-            Información del apartamento
-        </p>
+            {/* =====================================
+                    TARJETA DEL NIVEL SELECCIONADO
+                ====================================== */}
 
-        <strong>
-            Disponible
-        </strong>
-    </div>
-)}
+            {selectedLevel !== null && (
+                <div className="level-card">
+
+                    <button
+                        className="level-card-close"
+                        onClick={() =>
+                            setSelectedLevel(null)
+                        }
+                    >
+                        ×
+                    </button>
+
+                    <span className="level-card-label">
+                        NIVEL
+                    </span>
+
+                    <h2>
+                        {selectedLevel + 1}
+                    </h2>
+
+                    <p>
+                        Información del apartamento
+                    </p>
+
+                    <strong>
+                        Disponible
+                    </strong>
+
+                </div>
+            )}
+
             {/* =====================================
                     PANEL EXPLORAR
-            ====================================== */}
+                ====================================== */}
 
-            {(scene === "levels" || scene === "apartmentsOverview") && (
+            {(scene === "levels" ||
+                scene === "apartmentsOverview") && (
 
                 <>
 
-                    <aside className={`explorer-panel ${panelOpen ? "open" : "closed"}`}>
+                    <aside
+                        className={`explorer-panel ${
+                            panelOpen
+                                ? "open"
+                                : "closed"
+                        }`}
+                    >
 
                         <div className="explorer-header">
-
                             <span>NIVELES</span>
-
                         </div>
 
                         <div className="explorer-content">
 
                             <button className="explorer-item active">
-
                                 <span className="indicator"></span>
-
                                 TERRAZA
-
                             </button>
 
                             <button className="explorer-item">
-
                                 <span className="indicator"></span>
-
                                 DÚPLEX 10-11
-
                             </button>
 
                             <button className="explorer-item">
-
                                 <span className="indicator"></span>
-
                                 PENTHOUSE 9
-
                             </button>
 
                             <button
                                 className="explorer-item"
-                                onClick={() => setScene("apartmentsOverview")}
+                                onClick={() =>
+                                    setScene(
+                                        "apartmentsOverview"
+                                    )
+                                }
                             >
-
                                 <span className="indicator"></span>
 
                                 <span className="explorer-text">
-
                                     APARTAMENTOS
-
                                     <small>3–8</small>
-
                                 </span>
-
                             </button>
 
                             <button className="explorer-item">
-
                                 <span className="indicator"></span>
-
                                 PARQUEADERO 2
-
                             </button>
 
                         </div>
@@ -308,20 +280,27 @@ console.log(sceneImages[scene]);
                     </aside>
 
                     <button
-                        className={`explorer-toggle ${panelOpen ? "open" : ""}`}
-                        onClick={() => setPanelOpen(!panelOpen)}
-                        aria-label={panelOpen ? "Cerrar panel" : "Abrir panel"}
+                        className={`explorer-toggle ${
+                            panelOpen ? "open" : ""
+                        }`}
+                        onClick={() =>
+                            setPanelOpen(!panelOpen)
+                        }
+                        aria-label={
+                            panelOpen
+                                ? "Cerrar panel"
+                                : "Abrir panel"
+                        }
                     >
                         {panelOpen ? "→" : "←"}
                     </button>
 
                 </>
-
             )}
 
             {/* =====================================
                     TARJETAS APARTAMENTOS
-            ====================================== */}
+                ====================================== */}
 
             {scene === "apartments" && (
 
@@ -334,7 +313,9 @@ console.log(sceneImages[scene]);
                         <span>220.30 m²</span>
 
                         <button
-                            onClick={() => setScene("typeA360")}
+                            onClick={() =>
+                                setScene("typeA360")
+                            }
                         >
                             ENTRAR →
                         </button>
@@ -349,12 +330,15 @@ console.log(sceneImages[scene]);
 
                         <span>420.60 m²</span>
 
-
-                        <p>Dos niveles • Terraza privada</p>
+                        <p>
+                            Dos niveles • Terraza privada
+                        </p>
 
                         <button
                             className="duplex-button"
-                            onClick={() => setScene("duplex")}
+                            onClick={() =>
+                                setScene("duplex")
+                            }
                         >
                             EXPLORAR →
                         </button>
@@ -368,7 +352,9 @@ console.log(sceneImages[scene]);
                         <span>214.22 m²</span>
 
                         <button
-                            onClick={() => setScene("typeB360")}
+                            onClick={() =>
+                                setScene("typeB360")
+                            }
                         >
                             ENTRAR →
                         </button>
@@ -376,28 +362,25 @@ console.log(sceneImages[scene]);
                     </div>
 
                 </div>
-
             )}
 
             {/* =====================================
                     BOTÓN VOLVER
-            ====================================== */}
+                ====================================== */}
 
             {scene !== "home" && (
 
                 <button
                     className="back-button"
-                    onClick={() => setScene("home")}
+                    onClick={() =>
+                        setScene("home")
+                    }
                 >
-
                     ← VOLVER
-
                 </button>
 
             )}
 
         </div>
-
     );
-
 }
