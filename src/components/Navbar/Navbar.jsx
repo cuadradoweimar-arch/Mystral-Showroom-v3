@@ -1,10 +1,7 @@
 import "./Navbar.css";
 import { useState } from "react";
 
-export default function Navbar({ scene, setScene }) {
-    const [menuOpen, setMenuOpen] = useState(false);
-
-   const items = [
+const ITEMS = [
     { id: "home", label: "INICIO" },
     { id: "ingreso", label: "INGRESO" },
     { id: "project", label: "TERRAZA" },
@@ -15,26 +12,33 @@ export default function Navbar({ scene, setScene }) {
     { id: "brochure", label: "BROCHURE" },
 ];
 
+export default function Navbar({ scene, goTo }) {
+
+    const [menuOpen, setMenuOpen] = useState(false);
+
     const changeScene = (id) => {
-        setScene(id);
         setMenuOpen(false);
+        if (id !== scene) goTo(id);
     };
 
     return (
         <>
             <button
                 className="mobile-menu-button"
+                aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+                aria-expanded={menuOpen}
                 onClick={() => setMenuOpen(!menuOpen)}
             >
                 {menuOpen ? "✕" : "☰"}
             </button>
 
-            <div className={`scene-menu ${menuOpen ? "open" : ""}`}>
+            <nav className={`scene-menu ${menuOpen ? "open" : ""}`}>
                 <div className="scene-menu-items">
-                    {items.map((item) => (
+                    {ITEMS.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => changeScene(item.id)}
+                            aria-current={scene === item.id ? "page" : undefined}
                             className={`scene-item ${
                                 scene === item.id ? "active" : ""
                             }`}
@@ -42,12 +46,10 @@ export default function Navbar({ scene, setScene }) {
                             <span className="scene-text">
                                 {item.label}
                             </span>
-
-                            <span className="scene-line"></span>
                         </button>
                     ))}
                 </div>
-            </div>
+            </nav>
         </>
     );
 }

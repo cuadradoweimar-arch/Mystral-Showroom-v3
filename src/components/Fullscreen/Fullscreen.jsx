@@ -1,46 +1,44 @@
 import "./Fullscreen.css";
+
 import { useEffect, useState } from "react";
 
-export default function Fullscreen() {
+import {
+    FULLSCREEN_EVENTS,
+    isFullscreen,
+    isFullscreenSupported,
+    toggleFullscreen,
+} from "../../lib/fullscreen";
 
-    const [fullscreen, setFullscreen] = useState(false);
+export default function Fullscreen({ raised = false }) {
+
+    const [active, setActive] = useState(isFullscreen);
 
     useEffect(() => {
 
-        const change = () => {
-            setFullscreen(!!document.fullscreenElement);
-        };
+        const change = () => setActive(isFullscreen());
 
-        document.addEventListener("fullscreenchange", change);
+        FULLSCREEN_EVENTS.forEach((name) => document.addEventListener(name, change));
 
         return () => {
-            document.removeEventListener("fullscreenchange", change);
+            FULLSCREEN_EVENTS.forEach((name) => document.removeEventListener(name, change));
         };
 
     }, []);
 
-    const toggleFullscreen = async () => {
+    // iPhone no permite pantalla completa en páginas web.
+    if (!isFullscreenSupported()) return null;
 
-        if (!document.fullscreenElement) {
-
-            await document.documentElement.requestFullscreen();
-
-        } else {
-
-            await document.exitFullscreen();
-
-        }
-
-    };
+    const label = active ? "Salir de pantalla completa" : "Pantalla completa";
 
     return (
 
         <button
-            className="fullscreen"
+            className={`fullscreen-button ${raised ? "raised" : ""}`}
             onClick={toggleFullscreen}
-            title={fullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
+            title={label}
+            aria-label={label}
         >
-            {fullscreen ? "🗗" : "⛶"}
+            {active ? "🗗" : "⛶"}
         </button>
 
     );

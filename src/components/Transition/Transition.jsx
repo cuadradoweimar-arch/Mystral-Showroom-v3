@@ -18,8 +18,6 @@ export default function Transition({ scene, children }) {
 
                 animate={{
                     opacity: 1
-                    
-
                 }}
 
                 exit={{

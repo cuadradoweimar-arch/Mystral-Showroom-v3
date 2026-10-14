@@ -1,67 +1,44 @@
-.fullscreen{
+/* Por encima del tour 360 (9999), debajo del brochure */
 
+.fullscreen-button{
     position:fixed;
-
-    top:20px;
-
-    right: 130px;
-
-    width:52px;
-
-    height:52px;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
+    right:35px;
+    bottom:35px;
+    width:58px;
+    height:58px;
     border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    z-index:99999;
-
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
     color:white;
-
-    font-size:22px;
-
-    background:rgba(255,255,255,.10);
-
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-
-    border:1px solid rgba(255,255,255,.20);
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.25);
-
-    transition:
-        transform .35s ease,
-        background .35s ease,
-        border-color .35s ease,
-        box-shadow .35s ease;
-
+    font-size:24px;
+    cursor:pointer;
+    transition:.3s;
+    z-index:10000;
 }
 
-.fullscreen:hover{
-
-    transform:translateY(-2px) scale(1.08);
-
-    background:rgba(255,255,255,.20);
-
-    border-color:rgba(255,255,255,.45);
-
-    box-shadow:
-        0 0 20px rgba(255,255,255,.20),
-        0 12px 30px rgba(0,0,0,.35);
-
+.fullscreen-button:hover{
+    transform:scale(1.08);
+    background:rgba(255,255,255,.22);
 }
 
-.fullscreen:active{
+@media (max-width:900px){
 
-    transform:scale(.96);
+    .fullscreen-button{
+        right:20px;
+        bottom:20px;
+        width:50px;
+        height:50px;
+        font-size:20px;
+    }
+
+    /* En el tour queda encima de la franja del menú */
+    .fullscreen-button.raised{
+        bottom:95px;
+    }
 
 }

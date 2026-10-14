@@ -4,212 +4,140 @@ import { useEffect, useRef } from "react";
 import {
     Map,
     NavigationControl,
+    AttributionControl,
+    LngLatBounds,
     Marker,
     Popup,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-export default function ProjectsMap({ setScene }) {
-    const mapContainer = useRef(null);
-    const map = useRef(null);
+import { PROJECTS } from "../../data/projects";
 
-    const projects = [
-        {
-            name: "MYSTRAL",
-            city: "Montería",
-            country: "Colombia",
-            coordinates: [-75.871683, 8.780019],
-            scene: "home",
+const MAP_STYLE = {
+    version: 8,
+    sources: {
+        satellite: {
+            type: "raster",
+            tiles: [
+                "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            ],
+            tileSize: 256,
+            attribution:
+                "Esri, Maxar, Earthstar Geographics, and the GIS User Community",
         },
+    },
+    layers: [
         {
-            name: "ARENA",
-            city: "Coveñas",
-            country: "Colombia",
-            coordinates: [-75.663596, 9.410074],
-            scene: null,
-            url: "https://arena-showroom-rho.vercel.app/",
+            id: "satellite",
+            type: "raster",
+            source: "satellite",
+            minzoom: 0,
+            maxzoom: 19,
         },
-        {
-            name: "LA MAR",
-            city: "Coveñas",
-            country: "Colombia",
-            coordinates: [-75.663983, 9.409490],
-            scene: null,
-        },
-        {
-            name: "IUC",
-            fullName: "Instituto Universitario de Córdoba",
-            city: "Montería",
-            country: "Colombia",
-            coordinates: [-75.864421, 8.788177],
-            scene: null,
-        },
-        {
-            name: "RIVIERA",
-            city: "Montería",
-            country: "Colombia",
-            coordinates: [-75.869249, 8.786343],
-            scene: null,
-        },
-    ];
+    ],
+};
+
+function popupHtml(project) {
+
+    const action = project.url || project.scene
+        ? `<button class="project-explore-button">EXPLORAR PROYECTO →</button>`
+        : "";
+
+    return `
+        <div class="project-popup">
+            <div class="project-popup-label">PROYECTO</div>
+            <h2>${project.name}</h2>
+            <p>
+                ${project.fullName ? `${project.fullName}<br />` : ""}
+                ${project.city}<br />
+                ${project.country}
+            </p>
+            ${action}
+        </div>
+    `;
+}
+
+export default function ProjectsMap({ goTo, onBack }) {
+
+    const mapContainer = useRef(null);
+
+    // goTo puede cambiar entre renders; el mapa se crea una sola vez.
+    const goToRef = useRef(goTo);
 
     useEffect(() => {
-        if (map.current) return;
+        goToRef.current = goTo;
+    }, [goTo]);
 
-        map.current = new Map({
-            container: mapContainer.current,
+    useEffect(() => {
 
-            style: {
-                version: 8,
-
-                sources: {
-                    satellite: {
-                        type: "raster",
-                        tiles: [
-                            "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                        ],
-                        tileSize: 256,
-                        attribution:
-                            "Esri, Maxar, Earthstar Geographics, and the GIS User Community",
-                    },
-                },
-
-                layers: [
-                    {
-                        id: "satellite",
-                        type: "raster",
-                        source: "satellite",
-                        minzoom: 0,
-                        maxzoom: 19,
-                    },
-                ],
-            },
-
-            center: [-74, 4],
-            zoom: 1.5,
-        });
-
-        map.current.addControl(
-            new NavigationControl(),
-            "bottom-right"
+        // Encuadre inicial: todos los proyectos.
+        const bounds = PROJECTS.reduce(
+            (box, project) => box.extend(project.coordinates),
+            new LngLatBounds(PROJECTS[0].coordinates, PROJECTS[0].coordinates)
         );
 
-        map.current.on("load", () => {
-            projects.forEach((project) => {
-                const popup = new Popup({
-                    offset: 25,
-                    closeButton: true,
-                    closeOnClick: false,
-                    maxWidth: "300px",
-                }).setHTML(`
-                    <div class="project-popup">
+        const map = new Map({
+            container: mapContainer.current,
+            style: MAP_STYLE,
+            bounds,
+            fitBoundsOptions: { padding: 120, maxZoom: 12 },
+            attributionControl: false,
+        });
 
-                        <div class="project-popup-label">
-                            PROYECTO
-                        </div>
+        // Abajo a la derecha queda el botón de pantalla completa.
+        map.addControl(new NavigationControl(), "top-right");
+        map.addControl(new AttributionControl({ compact: true }), "bottom-left");
 
-                        <h2>${project.name}</h2>
+        PROJECTS.forEach((project) => {
 
-                        <p>
-                            ${
-                                project.fullName
-                                    ? `${project.fullName}<br />`
-                                    : ""
-                            }
-                            ${project.city}<br />
-                            ${project.country}
-                        </p>
+            const popup = new Popup({
+                offset: 25,
+                closeButton: true,
+                closeOnClick: false,
+                maxWidth: "300px",
+            }).setHTML(popupHtml(project));
 
-                        ${
-                            project.url
-                                ? `
-                                    <button
-                                        class="project-explore-button"
-                                        data-project="${project.name}"
-                                    >
-                                        EXPLORAR PROYECTO →
-                                    </button>
-                                `
-                                : project.scene
-                                ? `
-                                    <button
-                                        class="project-explore-button"
-                                        data-project="${project.name}"
-                                    >
-                                        EXPLORAR PROYECTO →
-                                    </button>
-                                `
-                                : `
-                                    <div class="project-coming-soon">
-                                        
-                                    </div>
-                                `
-                        }
+            const marker = new Marker({ color: "#ffffff", scale: 1.2 })
+                .setLngLat(project.coordinates)
+                .setPopup(popup)
+                .addTo(map);
 
-                    </div>
-                `);
+            const markerElement = marker.getElement();
 
-                const marker = new Marker({
-                    color: "#ffffff",
-                    scale: 1.2,
-                })
-                    .setLngLat(project.coordinates)
-                    .setPopup(popup)
-                    .addTo(map.current);
+            markerElement.classList.add("project-marker-with-label");
+            markerElement.setAttribute("data-project-name", project.name);
 
-                const markerElement = marker.getElement();
-
-                markerElement.classList.add(
-                    "project-marker-with-label"
-                );
-
-                markerElement.setAttribute(
-                    "data-project-name",
-                    project.name
-                );
-
-                markerElement.setAttribute(
-                    "data-label-position",
-                    project.labelPosition
-                );
-
-                markerElement.addEventListener("click", () => {
-                    map.current.flyTo({
-                        center: project.coordinates,
-                        zoom: 15,
-                        speed: 1.2,
-                        curve: 1.4,
-                        essential: true,
-                    });
+            markerElement.addEventListener("click", () => {
+                map.flyTo({
+                    center: project.coordinates,
+                    zoom: 15,
+                    speed: 1.2,
+                    curve: 1.4,
+                    essential: true,
                 });
+            });
 
-                popup.on("open", () => {
-                    const button = document.querySelector(
-                        `.project-explore-button[data-project="${project.name}"]`
-                    );
+            popup.on("open", () => {
 
-                    if (button && project.url) {
-                        button.onclick = () => {
-                            window.location.href = project.url;
-                        };
+                const button = popup
+                    .getElement()
+                    ?.querySelector(".project-explore-button");
+
+                if (!button) return;
+
+                button.onclick = () => {
+                    if (project.url) {
+                        window.open(project.url, "_blank", "noopener");
+                    } else if (project.scene) {
+                        goToRef.current(project.scene);
                     }
-
-                    if (button && project.scene) {
-                        button.onclick = () => {
-                            setScene(project.scene);
-                        };
-                    }
-                });
+                };
             });
         });
 
-        return () => {
-            if (map.current) {
-                map.current.remove();
-                map.current = null;
-            }
-        };
-    }, [setScene]);
+        return () => map.remove();
+
+    }, []);
 
     return (
         <div className="projects-map">
@@ -228,7 +156,7 @@ export default function ProjectsMap({ setScene }) {
 
                 <button
                     className="projects-map-back"
-                    onClick={() => setScene("home")}
+                    onClick={onBack}
                 >
                     ← VOLVER
                 </button>

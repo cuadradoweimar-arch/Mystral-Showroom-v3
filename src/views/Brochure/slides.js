@@ -49,6 +49,3 @@ export const slides = files.map((file) => ({
       ? "end"
       : undefined,
 }));
-
-console.log(images);
-console.log(slides);

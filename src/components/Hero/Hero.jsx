@@ -1,31 +1,24 @@
 import "./Hero.css";
 
-export default function Hero({ onExplore }) {
+export default function Hero({ onExplore, onProjects }) {
   return (
     <section className="hero">
 
-      <div className="hero-card">
+      <h1 className="visually-hidden">Mystral</h1>
 
-        <span className="hero-engine">
-          
-        </span>
+      <button
+        className="hero-button"
+        onClick={onExplore}
+      >
+        EXPLORAR
+      </button>
 
-        <h2 className="hero-logo">
-          
-        </h2>
-
-        <p className="hero-description">
-          
-        </p>
-
-        <button
-          className="hero-button"
-          onClick={onExplore}
-        >
-          EXPLORAR
-        </button>
-
-      </div>
+      <button
+        className="hero-projects"
+        onClick={onProjects}
+      >
+        PROYECTOS
+      </button>
 
     </section>
   );

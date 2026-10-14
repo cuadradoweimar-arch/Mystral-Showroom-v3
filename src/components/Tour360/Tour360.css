@@ -1,14 +1,9 @@
 .tour360{
-
     position:fixed;
     inset:0;
-
     background:#111;
-
     overflow:hidden;
-
     z-index:9999;
-
 }
 
 /* ===========================
@@ -16,130 +11,165 @@
 =========================== */
 
 .tour360-viewer{
-
     position:absolute;
     inset:0;
+}
 
+.viewer360{
+    position:relative;
+    width:100%;
+    height:100%;
 }
 
 /* ===========================
-   MENÚ IZQUIERDO
+   CARGA DEL PANORAMA
+=========================== */
+
+.viewer360-loader{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+    background:#111;
+    color:rgba(255,255,255,.8);
+    font-size:13px;
+    letter-spacing:4px;
+    z-index:150;
+    pointer-events:none;
+}
+
+/* Cambio de habitación: se ve el panorama anterior detrás */
+.viewer360-loader.is-overlay{
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+}
+
+.viewer360-loader button{
+    padding:12px 26px;
+    border:1px solid rgba(255,255,255,.6);
+    background:transparent;
+    color:white;
+    letter-spacing:3px;
+    cursor:pointer;
+    pointer-events:auto;
+}
+
+.viewer360-spinner{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.2);
+    border-top-color:white;
+    animation:viewer360Spin .9s linear infinite;
+}
+
+@keyframes viewer360Spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ===========================
+   HOTSPOT (FLECHA)
+=========================== */
+
+.tour-hotspot{
+    border:none;
+    background:transparent;
+    padding:0;
+    margin:0;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.tour-hotspot-arrow{
+    width:110px;
+    height:80px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    animation:tourHotspotFloat 1.8s ease-in-out infinite;
+    filter:drop-shadow(0 5px 8px rgba(0,0,0,.65));
+}
+
+.tour-hotspot-label{
+    margin-top:-4px;
+    color:#fff;
+    font-size:16px;
+    font-weight:400;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    white-space:nowrap;
+    text-shadow:0 2px 10px rgba(0,0,0,.95);
+}
+
+@keyframes tourHotspotFloat{
+    0%,
+    100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-6px);
+    }
+}
+
+/* ===========================
+   MENÚ DERECHO
 =========================== */
 
 .tour360-menu{
-
     position:absolute;
-
     top:50%;
     right:-30px;
-    left:auto;
-
     transform:translateY(-50%);
-
     display:flex;
     flex-direction:column;
     align-items:flex-end;
-
     z-index:200;
-
     width:340px;
-
-    padding:0;
-
-    background:transparent;
-
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
-
-    border:none;
-
-    box-shadow:none;
-
 }
-
-/* ===========================
-   TÍTULO
-=========================== */
-
-.tour360-menu h1{
-
-    margin:0 0 55px;
-
-    color:white;
-
-    font-size:34px;
-
-    font-weight:300;
-
-    letter-spacing:10px;
-
-    text-shadow:0 2px 10px rgba(0,0,0,.35);
-
-}
-
-/* ===========================
-   OPCIONES
-=========================== */
-
-/* ===========================
-   OPCIONES PREMIUM
-=========================== */
 
 .menu-item{
-
     width:100%;
-
     padding:18px 0;
-
     background:transparent;
-
     border:none;
-
     border-bottom:1px solid rgba(255,255,255,.15);
-
     color:rgba(255,255,255,.82);
-
     font-size:18px;
-
     font-weight:300;
-
     letter-spacing:5px;
-
     text-align:left;
-
     cursor:pointer;
-
     transition:
         color .35s ease,
         transform .35s ease,
         letter-spacing .35s ease,
         border-color .35s ease,
         text-shadow .35s ease;
-
-    text-shadow:
-        0 2px 8px rgba(0,0,0,.35);
-
+    text-shadow:0 2px 8px rgba(0,0,0,.35);
 }
 
-/* ===========================
-   EFECTO PREMIUM
-=========================== */
-
-.menu-item:hover{
-
+.menu-item:hover,
+.menu-item.active{
     color:#ffffff;
-
-    transform:translateX(12px) scale(1.02);
-
-    letter-spacing:7px;
-
     border-bottom:1px solid rgba(255,255,255,.75);
-
     text-shadow:
         0 0 8px rgba(255,255,255,.55),
         0 0 18px rgba(255,255,255,.35),
         0 2px 12px rgba(0,0,0,.45);
+}
 
+.menu-item:hover{
+    transform:translateX(12px) scale(1.02);
+    letter-spacing:7px;
 }
 
 /* ===========================
@@ -147,44 +177,26 @@
 =========================== */
 
 .tour360-back{
-
     position:absolute;
-
     left:35px;
-
     bottom:35px;
-
     z-index:300;
-
     padding:15px 30px;
-
     border-radius:14px;
-
     border:1px solid rgba(255,255,255,.15);
-
     background:rgba(255,255,255,.10);
-
     backdrop-filter:blur(20px);
     -webkit-backdrop-filter:blur(20px);
-
     color:white;
-
     font-size:15px;
-
     letter-spacing:1px;
-
     cursor:pointer;
-
     transition:all .3s ease;
-
 }
 
 .tour360-back:hover{
-
     background:rgba(255,255,255,.18);
-
     transform:translateY(-3px);
-
 }
 
 /* ===========================
@@ -192,53 +204,32 @@
 =========================== */
 
 .panorama-info{
-
     position:absolute;
-
     top:45px;
     left:55px;
-
     z-index:250;
-
     color:white;
-
-    text-shadow:
-        0 2px 12px rgba(0,0,0,.45);
-
+    text-shadow:0 2px 12px rgba(0,0,0,.45);
+    pointer-events:none;
 }
 
 .panorama-apartment{
-
     display:block;
-
     margin-bottom:10px;
-
     font-size:16px;
-
     font-weight:400;
-
     letter-spacing:6px;
-
     color:rgba(255,255,255,.75);
-
     text-transform:uppercase;
-
 }
 
 .panorama-title{
-
     margin:0;
-
     font-size:42px;
-
     font-weight:300;
-
     letter-spacing:6px;
-
     color:white;
-
     text-transform:uppercase;
-
 }
 
 /*==================================
@@ -246,385 +237,149 @@
 ===================================*/
 
 .drag-indicator{
-
     position:absolute;
-
     left:50%;
     bottom:55px;
-
     transform:translateX(-50%);
-
     display:flex;
     flex-direction:column;
     align-items:center;
-
     z-index:400;
-
     color:rgba(255,255,255,.75);
-
     pointer-events:none;
-
     animation:fadeOut 5s forwards;
-
 }
 
 .drag-arrows{
-
     font-size:26px;
-
     letter-spacing:4px;
-
     margin-bottom:8px;
-
     animation:dragMove 1.6s ease-in-out infinite;
-
 }
 
 .drag-indicator span{
-
     font-size:14px;
-
     letter-spacing:5px;
-
     text-transform:uppercase;
-
 }
 
 @keyframes dragMove{
-
-    0%{
+    0%,
+    100%{
         transform:translateX(-10px);
     }
-
     50%{
         transform:translateX(10px);
     }
-
-    100%{
-        transform:translateX(-10px);
-    }
-
 }
 
 @keyframes fadeOut{
-
-    0%{
-        opacity:1;
-    }
-
+    0%,
     80%{
         opacity:1;
     }
-
     100%{
         opacity:0;
     }
-
 }
 
 /* =========================================================
-   MOBILE - TOUR 360
-   MENÚ HORIZONTAL DESLIZABLE
+   MOBILE - MENÚ HORIZONTAL DESLIZABLE
 ========================================================= */
 
 @media (max-width:900px){
 
-    /* =========================
-       FRANJA INFERIOR
-    ========================= */
-
     .tour360-menu{
-
-        position:absolute;
-
         left:0;
         right:0;
         bottom:0;
         top:auto;
-
         transform:none;
-
         width:100%;
         height:78px;
-
         display:block;
-
         white-space:nowrap;
-
-        padding:0;
-
         background:rgba(20,20,20,.42);
-
         backdrop-filter:blur(18px);
         -webkit-backdrop-filter:blur(18px);
-
         border-top:1px solid rgba(255,255,255,.16);
-
         overflow-x:auto;
         overflow-y:hidden;
-
         -webkit-overflow-scrolling:touch;
-
         scrollbar-width:none;
-
         z-index:400;
-
     }
-
-    /* Ocultar barra de desplazamiento */
 
     .tour360-menu::-webkit-scrollbar{
-
         display:none;
-
     }
-
-
-    /* =========================
-       TÍTULO
-    ========================= */
-
-    .tour360-menu h1{
-
-        display:none;
-
-    }
-
-
-    /* =========================
-       OPCIONES
-    ========================= */
 
     .menu-item{
-
         width:auto;
-
         min-width:max-content;
-
         height:78px;
-
         padding:0 22px;
-
         display:inline-flex;
-
         align-items:center;
         justify-content:center;
-
-        background:transparent;
-
         border:none;
-
         border-right:1px solid rgba(255,255,255,.10);
-
-        color:rgba(255,255,255,.82);
-
         font-size:13px;
-
-        font-weight:300;
-
         letter-spacing:3px;
-
         text-align:center;
-
-        white-space:nowrap;
-
-        cursor:pointer;
-
         transition:
             color .3s ease,
             background .3s ease,
             letter-spacing .3s ease;
-
     }
 
-
-    /* =========================
-       ELEMENTO ACTIVO
-    ========================= */
+    .menu-item:hover{
+        transform:none;
+        letter-spacing:3px;
+    }
 
     .menu-item.active{
-
-        color:#ffffff;
-
         background:rgba(255,255,255,.10);
-
         border-bottom:2px solid rgba(255,255,255,.85);
-
     }
-
-
-    /* =========================
-       HOVER
-    ========================= */
-
-    @media (hover:hover) and (pointer:fine){
-
-        .menu-item:hover{
-
-            color:#ffffff;
-
-            background:rgba(255,255,255,.08);
-
-            transform:none;
-
-            letter-spacing:4px;
-
-            border-bottom:1px solid rgba(255,255,255,.65);
-
-            text-shadow:
-                0 0 8px rgba(255,255,255,.35),
-                0 2px 10px rgba(0,0,0,.4);
-
-        }
-
-    }
-
-
-    /* =========================
-       INFORMACIÓN SUPERIOR
-    ========================= */
 
     .panorama-info{
-
         top:60px;
-
         left:25px;
-
     }
 
     .panorama-apartment{
-
         font-size:13px;
-
         letter-spacing:4px;
-
     }
 
     .panorama-title{
-
         font-size:28px;
-
         letter-spacing:3px;
-
     }
-
-
-    /* =========================
-       BOTÓN VOLVER
-    ========================= */
 
     .tour360-back{
-
         left:20px;
-
         bottom:95px;
-
         padding:13px 22px;
-
         font-size:13px;
-
-        border-radius:14px;
-
         z-index:500;
-
     }
 
-
-    /* =========================
-       PANTALLA COMPLETA
-    ========================= */
-
-    .tour360-fullscreen{
-
-        right:20px;
-
-        bottom:95px;
-
-        width:52px;
-
-        height:52px;
-
-        z-index:500;
-
-    }
-
-
-    /* =========================
-       INDICADOR DE ARRASTRE
-    ========================= */
-
+    /* Encima del botón VOLVER para no superponerse */
     .drag-indicator{
-
-        bottom:100px;
-
+        bottom:165px;
         z-index:350;
-
+        white-space:nowrap;
     }
 
-}
+    .drag-indicator span{
+        font-size:11px;
+        letter-spacing:3px;
+    }
 
-/* ===========================
-   BOTÓN PANTALLA COMPLETA
-=========================== */
-
-.tour360-fullscreen{
-
-    position:absolute;
-
-    right:35px;
-    bottom:35px;
-
-    z-index:500;
-
-    width:52px;
-    height:52px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:50%;
-
-    border:1px solid rgba(255,255,255,.15);
-
-    background:rgba(255,255,255,.10);
-
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-
-    color:white;
-
-    font-size:25px;
-
-    font-weight:300;
-
-    cursor:pointer;
-
-    transition:all .3s ease;
-
-}
-
-.tour360-fullscreen:hover{
-
-    background:rgba(255,255,255,.20);
-
-    transform:scale(1.08);
-
-}
-
-/* =========================================================
-   AJUSTE FINAL MOBILE
-   El botón queda encima de la franja
-========================================================= */
-
-@media (max-width:900px){
-
-    .tour360-fullscreen{
-
-        right:20px;
-
-        bottom:95px;
-
+    .tour-hotspot-label{
+        font-size:14px;
     }
 
 }

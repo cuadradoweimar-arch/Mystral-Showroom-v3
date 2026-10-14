@@ -1,189 +1,109 @@
 import "./Viewer.css";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Transition from "../Transition/Transition";
-import Viewer360 from "../Tour360/Viewer360";
+import LevelsOverlay from "./LevelsOverlay";
+import ExplorerPanel from "./ExplorerPanel";
+import ApartmentSelector from "./ApartmentSelector";
 
-import hero from "../../assets/images/home/hero.jpg";
-import project from "../../assets/images/project/project.png";
-import inicio from "../../assets/images/location/inicio.jpg";
-import levelsSvg from "../../assets/images/levels/niveles.svg?raw";
+import { SCENES } from "../../data/scenes";
+import { videoSources } from "../../lib/media";
 
-import homeLoop from "../../assets/videos/home-loop.mp4";
-import galleryVideo from "../../assets/videos/fachada-trasera.mp4";
-import galleryTransitionVideo from "../../assets/videos/atras a frente.mp4";
-import locationVideo from "../../assets/videos/ubicacion.MP4";
-import ingresoVideo from "../../assets/videos/ingreso.mp4";
+const GALLERY_TRANSITION_VIDEO = "fachada-a-ingreso";
 
-import callePanorama from "../../assets/panoramas/ingreso/calle.png";
+// Duración del zoom hacia la franja antes de abrir un tour
+// (igual que .viewer.is-leaving en Viewer.css).
+const LEAVE_TO_TOUR_MS = 650;
 
-import apartment from "../../assets/images/apartments/apartment-01.jpg";
-import levels from "../../assets/images/levels/levels.png";
-import apartmentsOverview from "../../assets/images/apartments/apartments-overview.png";
+// Tiempo que se muestra el aviso de "en mantenimiento".
+const NOTICE_MS = 3500;
 
-import Brochure from "../../views/Brochure/Brochure";
+export default function Viewer({ scene, goTo, back }) {
 
+    const config = SCENES[scene];
 
-export default function Viewer({ scene, setScene }) {
+    // Video "fachada → ingreso" en curso (sólo en VER DISPONIBLE).
+    const [galleryTransition, setGalleryTransition] = useState(false);
 
-    const [panelOpen, setPanelOpen] = useState(false);
+    // Al cambiar de escena se limpia el estado de la anterior.
+    const [previousScene, setPreviousScene] = useState(scene);
 
-    const [selectedLevel, setSelectedLevel] = useState(null);
-
-    const [isGalleryTransitioning, setIsGalleryTransitioning] =
-        useState(false);
-
-    const [showIngresoPanorama, setShowIngresoPanorama] =
-        useState(false);
-
-
-    // =====================================================
-    // LIMPIAR ESTADOS AL CAMBIAR DE ESCENA
-    // =====================================================
-
-    useEffect(() => {
-
-        if (scene === "levels" || scene === "apartmentsOverview") {
-            setPanelOpen(false);
-        }
-
-        // Si salimos de gallery, apagamos la transición.
-        if (scene !== "gallery") {
-            setIsGalleryTransitioning(false);
-        }
-
-        // Si salimos de ingreso, cerramos el panorama.
-        if (scene !== "ingreso") {
-            setShowIngresoPanorama(false);
-        }
-
-    }, [scene]);
-
-
-    // =====================================================
-    // OCULTAR VIEWER CUANDO SE ABRE EL TOUR 360
-    // =====================================================
-
-    if (scene === "typeA360" || scene === "typeB360") {
-        return null;
+    if (previousScene !== scene) {
+        setPreviousScene(scene);
+        setGalleryTransition(false);
     }
 
+    const isGallery = scene === "gallery";
+    const showGalleryUi = isGallery && !galleryTransition;
 
     // =====================================================
-    // MOSTRAR ÚNICAMENTE EL BROCHURE
+    // FRANJAS DE NIVELES → TOUR 360
+    // El Viewer se desmonta al abrir el tour, así que el zoom
+    // hacia la franja tocada se anima aquí antes de navegar.
     // =====================================================
 
-    if (scene === "brochure") {
-        return <Brochure setScene={setScene} />;
-    }
+    const [leavingTo, setLeavingTo] = useState(null);
+    const [notice, setNotice] = useState(null);
 
+    const leaveTimer = useRef(null);
+    const noticeTimer = useRef(null);
 
-    // =====================================================
-    // IMÁGENES DE LAS ESCENAS
-    // =====================================================
+    useEffect(() => () => {
+        clearTimeout(leaveTimer.current);
+        clearTimeout(noticeTimer.current);
+    }, []);
 
-    const sceneImages = {
+    const handleLevelSelect = (level, origin) => {
 
-        home: hero,
+        if (leavingTo) return;
 
-        project: project,
-
-        gallery: null,
-
-        apartments: apartment,
-
-        apartmentsOverview: apartmentsOverview,
-
-        levels: levels,
-
-        location: inicio,
-
-    };
-
-
-    /*
-    =====================================================
-    FUNCIÓN DE LA FLECHA DE VER DISPONIBLE
-    =====================================================
-    */
-
-    const handleGalleryArrow = () => {
-
-        // Evita hacer clic varias veces mientras
-        // el video ya se está reproduciendo.
-        if (isGalleryTransitioning) return;
-
-
-        // Quitamos cualquier nivel seleccionado.
-        setSelectedLevel(null);
-
-
-        // Activamos el video "atras a frente.mp4".
-        setIsGalleryTransitioning(true);
-
-    };
-
-
-    /*
-    =====================================================
-    CUANDO TERMINA EL VIDEO "ATRAS A FRENTE"
-    =====================================================
-    */
-
-    const handleVideoEnded = () => {
-
-        // Video de ubicación
-        if (scene === "location") {
-
-            setScene("gallery");
-
+        if (level.status === "maintenance") {
+            setNotice(level);
+            clearTimeout(noticeTimer.current);
+            noticeTimer.current = setTimeout(() => setNotice(null), NOTICE_MS);
             return;
         }
 
+        setNotice(null);
+        setLeavingTo(origin);
+        leaveTimer.current = setTimeout(() => goTo(level.target), LEAVE_TO_TOUR_MS);
+    };
 
-        // Video especial de la flecha:
-        // al terminar vamos automáticamente a INGRESO.
-        if (scene === "gallery" && isGalleryTransitioning) {
+    // =====================================================
+    // VIDEO DE LA ESCENA
+    // =====================================================
 
-            setIsGalleryTransitioning(false);
+    const videoName = isGallery && galleryTransition
+        ? GALLERY_TRANSITION_VIDEO
+        : config.video;
 
-            setScene("ingreso");
+    const video = videoName ? videoSources(videoName) : null;
+
+    const handleVideoEnded = () => {
+
+        if (config.next) {
+            // La intro de ubicación no queda en el historial.
+            goTo(config.next, { replace: true });
+            return;
         }
 
+        if (isGallery && galleryTransition) {
+            goTo("ingreso");
+        }
     };
 
-
-    /*
-    =====================================================
-    ABRIR PANORAMA 360 DEL INGRESO
-    =====================================================
-    */
-
-    const handleOpenIngresoPanorama = () => {
-
-        setShowIngresoPanorama(true);
-
+    const handleGalleryArrow = () => {
+        setNotice(null);
+        setGalleryTransition(true);
     };
-
-
-    /*
-    =====================================================
-    CERRAR PANORAMA 360 DEL INGRESO
-    =====================================================
-    */
-
-    const handleCloseIngresoPanorama = () => {
-
-        setShowIngresoPanorama(false);
-
-    };
-
 
     return (
 
-        <div className="viewer">
-
+        <div
+            className={`viewer ${leavingTo ? "is-leaving" : ""}`}
+            style={leavingTo ? { transformOrigin: `${leavingTo.x * 100}% ${leavingTo.y * 100}%` } : undefined}
+        >
 
             {/* =====================================
                     TRANSICIÓN CINEMATOGRÁFICA
@@ -191,647 +111,140 @@ export default function Viewer({ scene, setScene }) {
 
             <Transition scene={scene}>
 
+                <div className="layer">
 
-                {/* =====================================
-                        ESCENAS CON VIDEO
-                    ====================================== */}
-
-                {scene === "home" ||
-                scene === "ingreso" ||
-                scene === "gallery" ||
-                scene === "location" ? (
-
-
-                    <div className="layer active">
-
+                    {video ? (
 
                         <video
-
-                            key={
-                                scene === "gallery" &&
-                                isGalleryTransitioning
-                                    ? "gallery-transition"
-                                    : scene
-                            }
-
+                            key={videoName}
                             className="layer-video"
-
-                            src={
-
-                                scene === "home"
-
-                                    ? homeLoop
-
-                                    : scene === "ingreso"
-
-                                        ? ingresoVideo
-
-                                        : scene === "gallery"
-
-                                            ? isGalleryTransitioning
-
-                                                ? galleryTransitionVideo
-
-                                                : galleryVideo
-
-                                            : locationVideo
-
-                            }
-
+                            src={video.src}
+                            poster={video.poster}
                             autoPlay
-
-                            loop={
-                                scene === "home" ||
-                                (
-                                    scene === "gallery" &&
-                                    !isGalleryTransitioning
-                                )
-                            }
-
                             muted
-
                             playsInline
-
+                            loop={config.loop && !galleryTransition}
                             preload="auto"
-
                             onEnded={handleVideoEnded}
-
                         />
 
-
-                        {/* =====================================
-                                OVERLAY DE NIVELES
-
-                                SOLO EN FACHADA TRASERA
-
-                                NO APARECE MIENTRAS SE
-                                REPRODUCE EL VIDEO DE TRANSICIÓN
-                            ====================================== */}
-
-                        {scene === "gallery" &&
-                            !isGalleryTransitioning && (
-
-                                <div
-
-                                    className="levels-overlay"
-
-                                    onClick={(e) => {
-
-                                        const path =
-                                            e.target.closest("path");
-
-                                        if (!path) return;
-
-
-                                        const paths = Array.from(
-
-                                            e.currentTarget.querySelectorAll(
-                                                "path"
-                                            )
-
-                                        );
-
-
-                                        const index =
-                                            paths.indexOf(path);
-
-
-                                        paths.forEach((item) => {
-
-                                            item.classList.remove(
-                                                "selected"
-                                            );
-
-                                        });
-
-
-                                        path.classList.add("selected");
-
-
-                                        setSelectedLevel(index);
-
-                                    }}
-
-                                    dangerouslySetInnerHTML={{
-                                        __html: levelsSvg
-                                    }}
-
-                                />
-
-                            )}
-
-
-                    </div>
-
-
-                ) : (
-
-
-                    /* =====================================
-                            ESCENAS CON IMAGEN
-                        ====================================== */
-
-                    <div className="layer active">
-
+                    ) : (
 
                         <div
-
                             className="background-image"
-
-                            style={{
-
-                                backgroundImage:
-
-                                    sceneImages[scene]
-
-                                        ? `url(${sceneImages[scene]})`
-
-                                        : "none",
-
-                            }}
-
+                            style={{ backgroundImage: `url(${config.image})` }}
                         />
 
+                    )}
 
-                    </div>
+                    {/* Franjas de niveles: abren el tour de su apartamento */}
+                    {showGalleryUi && (
+                        <LevelsOverlay onSelect={handleLevelSelect} />
+                    )}
 
-                )}
-
+                </div>
 
             </Transition>
 
-
             {/* =====================================
-                    HOTSPOT DEL INGRESO
-
-                    SOLO APARECE EN INGRESO
-
-                    AL HACER CLICK:
-                    ABRE EL PANORAMA 360
+                    HOTSPOT DEL INGRESO → PANORAMA 360
                 ====================================== */}
 
-            {scene === "ingreso" &&
-                !showIngresoPanorama && (
+            {scene === "ingreso" && (
 
-                    <button
+                <button
+                    className="ingreso-hotspot"
+                    aria-label="Explorar ingreso en 360°"
+                    onClick={() => goTo("ingresoPanorama")}
+                >
+                    <span className="ingreso-hotspot-dot"></span>
+                </button>
 
-                        className="ingreso-hotspot"
-
-                        aria-label="Explorar ingreso"
-
-                        onClick={handleOpenIngresoPanorama}
-
-                    >
-
-                        <span className="ingreso-hotspot-dot"></span>
-
-                    </button>
-
-                )}
-
-
-            {/* =====================================
-                    PANORAMA 360 DEL INGRESO
-                ====================================== */}
-
-            {scene === "ingreso" &&
-                showIngresoPanorama && (
-
-                    <div className="ingreso-panorama-overlay">
-
-
-                        <div className="ingreso-panorama-viewer">
-
-                           <Viewer360
-    image={callePanorama}
-    hotspots={[
-        {
-            type: "arrow",
-            position: [-3, -1.2, 0],
-            label: "INGRESO",
-            onClick: () => {
-                console.log("Hotspot de ingreso");
-            }
-        }
-    ]}
-/>
-
-                        </div>
-
-
-                        {/* BOTÓN CERRAR */}
-
-                        <button
-
-                            className="ingreso-panorama-close"
-
-                            aria-label="Cerrar panorama"
-
-                            onClick={handleCloseIngresoPanorama}
-
-                        >
-
-                            ×
-
-                        </button>
-
-
-                        {/* TÍTULO */}
-
-                        <div className="ingreso-panorama-title">
-
-                            INGRESO
-
-                        </div>
-
-
-                    </div>
-
-                )}
-
+            )}
 
             {/* =====================================
                     FLECHA DE VER DISPONIBLE
-
-                    SOLO EN GALLERY
-
-                    AL HACER CLICK:
-
-                    atras a frente.mp4
-                    ↓
-                    INGRESO
+                    atras a frente.mp4 → INGRESO
                 ====================================== */}
 
-            {scene === "gallery" &&
-                !isGalleryTransitioning && (
+            {showGalleryUi && (
 
-                    <button
+                <button
+                    className="facade-arrow"
+                    aria-label="Continuar hacia ingreso"
+                    onClick={handleGalleryArrow}
+                >
+                    ‹
+                </button>
 
-                        className="facade-arrow"
-
-                        aria-label="Continuar hacia ingreso"
-
-                        onClick={handleGalleryArrow}
-
-                    >
-
-                        ‹
-
-                    </button>
-
-                )}
-
+            )}
 
             {/* =====================================
-                    TARJETA DEL NIVEL SELECCIONADO
+                    AVISO: RECORRIDO EN MANTENIMIENTO
                 ====================================== */}
 
-            {selectedLevel !== null &&
-                scene === "gallery" &&
-                !isGalleryTransitioning && (
+            {showGalleryUi && notice && (
 
+                <div className="level-card" role="status" key={notice.id}>
 
-                    <div className="level-card">
+                    <button
+                        className="level-card-close"
+                        aria-label="Cerrar aviso"
+                        onClick={() => setNotice(null)}
+                    >
+                        ×
+                    </button>
 
+                    <span className="level-card-label">
+                        {notice.name}
+                    </span>
 
-                        <button
+                    <h2>
+                        {notice.floors}
+                    </h2>
 
-                            className="level-card-close"
+                    <p>
+                        Recorrido en mantenimiento
+                    </p>
 
-                            onClick={() =>
-                                setSelectedLevel(null)
-                            }
+                    <strong>
+                        Disponible próximamente
+                    </strong>
 
-                        >
+                </div>
 
-                            ×
-
-                        </button>
-
-
-                        <span className="level-card-label">
-
-                            NIVEL
-
-                        </span>
-
-
-                        <h2>
-
-                            {selectedLevel + 1}
-
-                        </h2>
-
-
-                        <p>
-
-                            Información del apartamento
-
-                        </p>
-
-
-                        <strong>
-
-                            Disponible
-
-                        </strong>
-
-
-                    </div>
-
-                )}
-
+            )}
 
             {/* =====================================
                     PANEL EXPLORAR
                 ====================================== */}
 
-            {(scene === "levels" ||
-                scene === "apartmentsOverview") && (
-
-
-                <>
-
-
-                    <aside
-
-                        className={`explorer-panel ${
-                            panelOpen
-                                ? "open"
-                                : "closed"
-                        }`}
-
-                    >
-
-
-                        <div className="explorer-header">
-
-                            <span>NIVELES</span>
-
-                        </div>
-
-
-                        <div className="explorer-content">
-
-
-                            <button className="explorer-item active">
-
-                                <span className="indicator"></span>
-
-                                TERRAZA
-
-                            </button>
-
-
-                            <button className="explorer-item">
-
-                                <span className="indicator"></span>
-
-                                DÚPLEX 10-11
-
-                            </button>
-
-
-                            <button className="explorer-item">
-
-                                <span className="indicator"></span>
-
-                                PENTHOUSE 9
-
-                            </button>
-
-
-                            <button
-
-                                className="explorer-item"
-
-                                onClick={() =>
-                                    setScene(
-                                        "apartmentsOverview"
-                                    )
-                                }
-
-                            >
-
-                                <span className="indicator"></span>
-
-
-                                <span className="explorer-text">
-
-                                    APARTAMENTOS
-
-                                    <small>3–8</small>
-
-                                </span>
-
-                            </button>
-
-
-                            <button className="explorer-item">
-
-                                <span className="indicator"></span>
-
-                                PARQUEADERO 2
-
-                            </button>
-
-
-                        </div>
-
-
-                    </aside>
-
-
-                    <button
-
-                        className={`explorer-toggle ${
-                            panelOpen ? "open" : ""
-                        }`}
-
-                        onClick={() =>
-                            setPanelOpen(!panelOpen)
-                        }
-
-                        aria-label={
-
-                            panelOpen
-
-                                ? "Cerrar panel"
-
-                                : "Abrir panel"
-
-                        }
-
-                    >
-
-                        {panelOpen ? "→" : "←"}
-
-                    </button>
-
-
-                </>
-
+            {(scene === "levels" || scene === "apartmentsOverview") && (
+                <ExplorerPanel scene={scene} goTo={goTo} />
             )}
-
 
             {/* =====================================
                     TARJETAS APARTAMENTOS
                 ====================================== */}
 
             {scene === "apartments" && (
-
-
-                <div className="apartment-selector">
-
-
-                    <div className="apartment-card">
-
-
-                        <h2>
-
-                            TIPO A
-
-                        </h2>
-
-
-                        <span>
-
-                            220.30 m²
-
-                        </span>
-
-
-                        <button
-
-                            onClick={() =>
-                                setScene("typeA360")
-                            }
-
-                        >
-
-                            ENTRAR →
-
-                        </button>
-
-
-                    </div>
-
-
-                    <div className="apartment-card duplex-card">
-
-
-                        <div className="duplex-badge"></div>
-
-
-                        <h2>
-
-                            DÚPLEX
-
-                        </h2>
-
-
-                        <span>
-
-                            420.60 m²
-
-                        </span>
-
-
-                        <p>
-
-                            Dos niveles • Terraza privada
-
-                        </p>
-
-
-                        <button
-
-                            className="duplex-button"
-
-                            onClick={() =>
-                                setScene("duplex")
-                            }
-
-                        >
-
-                            EXPLORAR →
-
-                        </button>
-
-
-                    </div>
-
-
-                    <div className="apartment-card">
-
-
-                        <h2>
-
-                            TIPO B
-
-                        </h2>
-
-
-                        <span>
-
-                            214.22 m²
-
-                        </span>
-
-
-                        <button
-
-                            onClick={() =>
-                                setScene("typeB360")
-                            }
-
-                        >
-
-                            ENTRAR →
-
-                        </button>
-
-
-                    </div>
-
-
-                </div>
-
+                <ApartmentSelector goTo={goTo} />
             )}
-
 
             {/* =====================================
                     BOTÓN VOLVER
                 ====================================== */}
 
-            {scene !== "home" && !showIngresoPanorama && (
-
+            {scene !== "home" && (
 
                 <button
-
                     className="back-button"
-
-                    onClick={() => {
-
-                        setIsGalleryTransitioning(false);
-
-                        setSelectedLevel(null);
-
-                        setShowIngresoPanorama(false);
-
-                        setScene("home");
-
-                    }}
-
+                    onClick={back}
                 >
-
                     ← VOLVER
-
                 </button>
 
-
             )}
-
 
         </div>
 

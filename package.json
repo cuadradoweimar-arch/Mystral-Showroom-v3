@@ -1,5 +1,5 @@
 {
-  "name": "mystral-showroom-v2",
+  "name": "mystral-showroom",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,8 +13,6 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "framer-motion": "^12.42.2",
-    "gsap": "^3.15.0",
-    "lucide-react": "^1.26.0",
     "maplibre-gl": "^6.7.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

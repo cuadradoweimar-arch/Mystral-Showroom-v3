@@ -2,23 +2,17 @@ import { useState, useEffect } from "react";
 import "./Brochure.css";
 import { slides } from "./slides";
 
-export default function Brochure({ setScene }) {
+const LAST = slides.length - 1;
+
+export default function Brochure({ onClose }) {
 
     const [current, setCurrent] = useState(0);
 
     const slide = slides[current];
 
-    const next = () => {
-        if (current < slides.length - 1) {
-            setCurrent(prev => prev + 1);
-        }
-    };
+    const next = () => setCurrent((index) => Math.min(index + 1, LAST));
 
-    const prev = () => {
-        if (current > 0) {
-            setCurrent(prev => prev - 1);
-        }
-    };
+    const prev = () => setCurrent((index) => Math.max(index - 1, 0));
 
     // Precarga de la siguiente imagen
     useEffect(() => {
@@ -37,11 +31,11 @@ export default function Brochure({ setScene }) {
 
         const handleKey = (e) => {
 
-            if (e.key === "ArrowRight") next();
+            if (e.key === "ArrowRight") setCurrent((index) => Math.min(index + 1, LAST));
 
-            if (e.key === "ArrowLeft") prev();
+            if (e.key === "ArrowLeft") setCurrent((index) => Math.max(index - 1, 0));
 
-            if (e.key === "Escape") setScene("home");
+            if (e.key === "Escape") onClose();
 
         };
 
@@ -49,7 +43,7 @@ export default function Brochure({ setScene }) {
 
         return () => window.removeEventListener("keydown", handleKey);
 
-    }, [current]);
+    }, [onClose]);
 
     return (
 
@@ -58,8 +52,7 @@ export default function Brochure({ setScene }) {
             <img
                 key={slide.image}
                 src={slide.image}
-                alt=""
-                loading="eager"
+                alt={`Brochure Mystral, página ${current + 1}`}
                 decoding="async"
                 className="brochure-image"
             />
@@ -89,6 +82,7 @@ export default function Brochure({ setScene }) {
 
                     <button
                         className="brochure-arrow left"
+                        aria-label="Página anterior"
                         onClick={prev}
                     >
                         ❮
@@ -96,6 +90,7 @@ export default function Brochure({ setScene }) {
 
                     <button
                         className="brochure-arrow right"
+                        aria-label="Página siguiente"
                         onClick={next}
                     >
                         ❯
@@ -130,7 +125,7 @@ export default function Brochure({ setScene }) {
 
                         <button
                             className="brochure-start"
-                            onClick={() => setScene("home")}
+                            onClick={onClose}
                         >
                             VOLVER
                         </button>
@@ -143,7 +138,8 @@ export default function Brochure({ setScene }) {
 
             <button
                 className="brochure-close"
-                onClick={() => setScene("home")}
+                aria-label="Cerrar brochure"
+                onClick={onClose}
             >
                 ✕
             </button>
