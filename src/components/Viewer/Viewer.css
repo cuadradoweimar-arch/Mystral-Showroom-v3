@@ -1019,17 +1019,75 @@ arrastrando (usePanZoom.js). Se centra con translate(-50%).
         margin:6px 0 12px;
     }
 
+    /* Ficha de unidad compacta en celular: ocupa el tercio
+       inferior y deja ver la fachada */
     .unit-card{
-        max-height:calc(100% - 200px);
+        bottom:24px;
+        left:0;
+        right:0;
+        margin-inline:auto;
+        width:min(300px, calc(100% - 32px));
+        padding:16px 16px 14px;
+        border-radius:22px;
+        max-height:calc(100% - 140px);
         overflow-y:auto;
     }
 
+    .unit-card .level-card-label{
+        font-size:10px;
+        letter-spacing:3px;
+    }
+
+    .unit-card h2{
+        margin:4px 0 6px;
+        font-size:24px;
+    }
+
+    .unit-card .unit-status{
+        padding:3px 10px;
+        font-size:10px;
+    }
+
+    .level-card.unit-card .unit-price{
+        margin:8px 0 0;
+        font-size:16px;
+    }
+
+    .unit-card .level-card-close{
+        top:6px;
+        right:8px;
+    }
+
+    /* Área, piso y tipología en una sola fila */
     .unit-details{
-        margin:12px 0 16px;
+        display:grid;
+        grid-template-columns:repeat(3, 1fr);
+        gap:6px;
+        margin:10px 0 12px;
+        text-align:center;
     }
 
     .unit-details div{
-        padding:7px 0;
+        flex-direction:column;
+        gap:2px;
+        padding:6px 2px;
+        border:none;
+        border-radius:10px;
+        background:rgba(255, 255, 255, 0.07);
+        font-size:12px;
+    }
+
+    .unit-details dt{
+        font-size:10px;
+    }
+
+    .unit-actions{
+        gap:7px;
+    }
+
+    .unit-button{
+        padding:9px 12px;
+        font-size:11px;
     }
 
     /* Arriba, bajo VOLVER y el menú: abajo están el zoom
