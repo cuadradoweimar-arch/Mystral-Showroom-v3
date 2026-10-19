@@ -10,7 +10,7 @@ export default function Hero({ onExplore, onProjects }) {
         className="hero-button"
         onClick={onExplore}
       >
-        EXPLORAR
+        INGRESAR
       </button>
 
       <button

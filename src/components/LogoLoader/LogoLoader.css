@@ -1,0 +1,304 @@
+/* =====================================================
+   PANTALLA DE CARGA — ESFERA DE VIDRIO CON EL LOGO
+   (estilo Siri de iOS 27)
+===================================================== */
+
+.logo-loader{
+    /* --orb: diámetro de la esfera (tamaño de ícono de carga) */
+    --orb:min(22vmin, 88px);
+
+    /* Puntero de -1 a 1 (lo escribe LogoLoader.jsx) */
+    --px:0;
+    --py:0;
+    --press:1;
+
+    --spring:cubic-bezier(.34,1.56,.64,1);
+
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#000000;
+    z-index:20000;
+    opacity:1;
+    touch-action:none;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    transition:opacity .8s ease, visibility 0s;
+}
+
+.logo-loader.is-pressed{
+    --press:.88;
+}
+
+.logo-loader.is-leaving{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .8s ease, visibility 0s .8s;
+}
+
+/* Dentro del visor 360: cubre sólo el panorama; el título,
+   el menú y VOLVER del tour siguen visibles encima */
+.logo-loader.is-embedded{
+    position:absolute;
+    z-index:150;
+}
+
+/* Cambio de habitación: se ve el panorama anterior detrás */
+.logo-loader.is-overlay{
+    background:rgba(0,0,0,.55);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+}
+
+.logo-loader-stage{
+    position:relative;
+    width:calc(var(--orb) * 1.6);
+    height:calc(var(--orb) * 1.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    perspective:calc(var(--orb) * 4);
+}
+
+/* Vaivén suave en reposo */
+.logo-orb-float{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation:logoOrbFloat 5s ease-in-out infinite;
+}
+
+@keyframes logoOrbFloat{
+    0%, 100%{ transform:translateY(0) scale(1); }
+    50%{ transform:translateY(calc(var(--orb) * -.025)) scale(1.015); }
+}
+
+/* =========================
+   ESFERA
+   Se inclina y se desplaza hacia el puntero; al presionar
+   se hunde (--press) y vuelve con rebote.
+========================= */
+
+/* Vidrio: difumina lo que hay detrás (en el tour, el
+   panorama anterior) y emite una luz blanca suave por el
+   borde. La esfera no gira: sólo se inclina hacia el puntero. */
+.logo-orb{
+    position:relative;
+    width:var(--orb);
+    height:var(--orb);
+    border-radius:50%;
+    perspective:calc(var(--orb) * 4);
+    background:radial-gradient(circle at 50% 40%, rgba(255,255,255,.05), rgba(255,255,255,.015) 70%);
+    backdrop-filter:blur(3px) brightness(1.08);
+    -webkit-backdrop-filter:blur(3px) brightness(1.08);
+    box-shadow:
+        0 0 calc(var(--orb) * .06) rgba(255,255,255,.12),
+        0 0 calc(var(--orb) * .2) rgba(210,210,215,.08);
+    transform:
+        translate(calc(var(--px) * var(--orb) * .05), calc(var(--py) * var(--orb) * .05))
+        rotateX(calc(var(--py) * -12deg))
+        rotateY(calc(var(--px) * 14deg))
+        scale(var(--press));
+    transition:transform .7s var(--spring);
+}
+
+/* =========================
+   ROMBO 3D DENTRO DE LA ESFERA
+   Posición y tamaño medidos en la imagen original: el
+   rombo está centrado en (50.3%, 51.5%) de la esfera y
+   mide 69% de su diámetro de punta a punta.
+   .logo-plate gira sobre Y; dentro, .logo-prism es un
+   prisma cuadrado girado 45° = la forma del rombo.
+========================= */
+
+.logo-plate{
+    --logo:calc(var(--orb) * .69);
+    --side:calc(var(--logo) * .7071);
+    --depth:calc(var(--logo) * .06);
+
+    position:absolute;
+    z-index:1;
+    left:calc(50.3% - var(--logo) / 2);
+    top:calc(51.5% - var(--logo) / 2);
+    width:var(--logo);
+    height:var(--logo);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform-style:preserve-3d;
+    animation:logoPlateSpin 5s infinite;
+}
+
+/* De frente un instante (~0.3 s), arranca con impulso y
+   frena suave al volver al frente */
+@keyframes logoPlateSpin{
+    0%{
+        transform:rotateY(0deg);
+    }
+    6%{
+        transform:rotateY(0deg);
+        animation-timing-function:cubic-bezier(.3,.15,.45,.95);
+    }
+    100%{
+        transform:rotateY(360deg);
+    }
+}
+
+.logo-prism{
+    position:relative;
+    width:var(--side);
+    height:var(--side);
+    flex-shrink:0;
+    transform-style:preserve-3d;
+    transform:rotateZ(45deg);
+}
+
+.logo-prism-face,
+.logo-prism-edge{
+    position:absolute;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+}
+
+.logo-prism-face{
+    inset:0;
+    overflow:hidden;
+}
+
+/* rombo-vidrio.png: el rombo ocupa 464 de sus 500 px.
+   Se centra y se gira para compensar los 45° del prisma. */
+.logo-prism-face img{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:calc(var(--logo) * 500 / 464);
+    height:calc(var(--logo) * 500 / 464);
+    max-width:none;
+    transform-origin:0 0;
+    transform:rotate(-45deg) translate(-50%, -50%);
+    user-select:none;
+}
+
+.logo-prism-face.is-front{
+    transform:translateZ(calc(var(--depth) / 2));
+}
+
+.logo-prism-face.is-back{
+    transform:rotateY(180deg) translateZ(calc(var(--depth) / 2));
+}
+
+/* Visto desde atrás el prisma queda girado -45°: la imagen
+   gira al revés para que el reverso se lea derecho */
+.logo-prism-face.is-back img{
+    transform:rotate(45deg) translate(-50%, -50%);
+}
+
+/* Cantos de vidrio: blancos translúcidos */
+.logo-prism-edge.is-right,
+.logo-prism-edge.is-left{
+    top:0;
+    left:calc(50% - var(--depth) / 2);
+    width:var(--depth);
+    height:100%;
+    background:linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.7) 50%, rgba(255,255,255,.18));
+}
+
+.logo-prism-edge.is-right{
+    transform:rotateY(90deg) translateZ(calc(var(--side) / 2));
+}
+
+.logo-prism-edge.is-left{
+    transform:rotateY(-90deg) translateZ(calc(var(--side) / 2));
+}
+
+.logo-prism-edge.is-top,
+.logo-prism-edge.is-bottom{
+    left:0;
+    top:calc(50% - var(--depth) / 2);
+    width:100%;
+    height:var(--depth);
+    background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.6) 50%, rgba(255,255,255,.18));
+}
+
+.logo-prism-edge.is-top{
+    transform:rotateX(90deg) translateZ(calc(var(--side) / 2));
+}
+
+.logo-prism-edge.is-bottom{
+    transform:rotateX(-90deg) translateZ(calc(var(--side) / 2));
+}
+
+/* La esfera (sin el rombo) en PNG transparente: deja ver lo
+   que hay detrás y sus reflejos quedan por encima del rombo,
+   como si estuviera dentro del vidrio. */
+.logo-orb-image{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    object-fit:cover;
+    user-select:none;
+    pointer-events:none;
+}
+
+/* Reflejo de luz sobre el vidrio: sigue al puntero */
+.logo-orb-shine{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    border-radius:50%;
+    pointer-events:none;
+    background:radial-gradient(
+        38% 26% at calc(50% + var(--px) * 22%) calc(24% + var(--py) * 16%),
+        rgba(255,255,255,.3),
+        rgba(255,255,255,0) 70%
+    );
+    mix-blend-mode:screen;
+}
+
+/* Onda al tocar */
+.logo-orb-pulse{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:var(--orb);
+    height:var(--orb);
+    margin-left:calc(var(--orb) * -.5);
+    margin-top:calc(var(--orb) * -.5);
+    border-radius:50%;
+    pointer-events:none;
+    background:radial-gradient(closest-side, rgba(235,235,240,.9), rgba(160,160,168,.35) 55%, transparent);
+    filter:blur(calc(var(--orb) * .12));
+}
+
+.logo-orb-pulse{
+    opacity:0;
+}
+
+.logo-loader.is-pulse .logo-orb-pulse{
+    animation:logoOrbPulse .9s cubic-bezier(.22,1,.36,1);
+}
+
+@keyframes logoOrbPulse{
+    from{ opacity:.35; transform:scale(.95); }
+    to{ opacity:0; transform:scale(1.8); }
+}
+
+/* =========================
+   MOVIMIENTO REDUCIDO
+========================= */
+
+@media (prefers-reduced-motion:reduce){
+
+    .logo-orb-float,
+    .logo-plate{
+        animation:none;
+    }
+
+}

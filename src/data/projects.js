@@ -4,8 +4,11 @@ PROYECTOS DEL MAPA
 
 scene: escena de este showroom que abre el proyecto
 url:   showroom externo (se abre en otra pestaña)
+image: foto del proyecto en su ficha del mapa (opcional)
 =====================================================
 */
+
+import mystralImage from "../assets/images/projects/mystral.jpg";
 
 export const PROJECTS = [
     {
@@ -14,6 +17,7 @@ export const PROJECTS = [
         country: "Colombia",
         coordinates: [-75.871683, 8.780019],
         scene: "home",
+        image: mystralImage,
     },
     {
         name: "ARENA",

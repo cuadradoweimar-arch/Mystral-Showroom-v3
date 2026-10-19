@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 README.zip
+
+# Archivos fuente pesados (no se publican)
+originales

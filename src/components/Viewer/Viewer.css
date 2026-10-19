@@ -51,10 +51,14 @@
    CAPA DE FONDO (VIDEO O IMAGEN)
 ========================================================= */
 
+/* container-type: el escenario se mide en unidades de esta
+   capa (cqw / cqh) para calcular su tamaño "cover" */
 .layer{
     position:absolute;
     inset:0;
     z-index:1;
+    overflow:hidden;
+    container-type:size;
 }
 
 .layer-video{
@@ -79,27 +83,36 @@
    BOTÓN VOLVER
 ========================================================= */
 
+/* Arriba a la izquierda, compacto */
 .back-button{
     position:absolute;
-    left:40px;
-    bottom:40px;
-    padding:14px 28px;
-    background:rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.3);
+    left:30px;
+    top:30px;
+    padding:9px 18px;
+    background:var(--glass-bg);
+    border:var(--glass-border);
+    box-shadow:var(--glass-shadow);
     color:white;
-    border-radius:10px;
+    border-radius:999px;
     cursor:pointer;
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    font-size:15px;
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    font-size:12px;
     letter-spacing:1px;
-    transition:.3s;
+    transition:
+        background .3s ease,
+        box-shadow .3s ease,
+        transform .35s var(--glass-spring);
     z-index:1000;
 }
 
 .back-button:hover{
-    background:rgba(255,255,255,.15);
-    transform:translateY(-2px);
+    background:var(--glass-bg-hover);
+    box-shadow:var(--glass-shadow-hover);
+}
+
+.back-button:active{
+    transform:scale(.94);
 }
 
 /* =========================================================
@@ -182,158 +195,183 @@
 }
 
 /* =========================================================
-   EXPLORER PANEL
+   NIVELES: COLUMNA DE PISOS (a la derecha)
+   Entre el botón del menú (arriba) y pantalla completa
+   (abajo). Vidrio claro con píldoras blancas; el piso
+   elegido va en azul petróleo.
 ========================================================= */
 
-.explorer-panel{
+.floors-strip{
     position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    width:260px;
-    max-height:calc(100% - 40px);
+    top:100px;
+    bottom:110px;
+    right:30px;
+    width:112px;
     display:flex;
     flex-direction:column;
-    overflow:hidden;
-    background:rgba(18,22,28,.28);
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:24px;
-    box-shadow:0 12px 35px rgba(0,0,0,.18);
-    z-index:900;
-    transition:right .45s ease;
-}
-
-.explorer-panel.open{
-    right:30px;
-}
-
-.explorer-panel.closed{
-    right:-230px;
-}
-
-.explorer-header{
-    flex-shrink:0;
-    padding:26px 28px 18px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    background:rgba(255,255,255,.02);
-}
-
-.explorer-header span{
-    color:white;
-    font-size:13px;
-    letter-spacing:6px;
-    font-weight:500;
-}
-
-.explorer-content{
-    flex:1;
+    gap:8px;
+    padding:10px;
     overflow-y:auto;
-    padding:22px 18px 28px;
+    scrollbar-width:none;
+    background:rgba(255, 255, 255, 0.45);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    border:var(--glass-border);
+    border-radius:26px;
+    box-shadow:var(--glass-shadow);
+    z-index:900;
 }
 
-.explorer-content::-webkit-scrollbar{
-    width:4px;
+.floors-strip::-webkit-scrollbar{
+    display:none;
 }
 
-.explorer-content::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,.18);
-    border-radius:20px;
+.floors-strip-item{
+    flex-shrink:0;
+    height:48px;
+    border:1px solid rgba(255, 255, 255, 0.9);
+    border-radius:16px;
+    background:rgba(255, 255, 255, 0.88);
+    box-shadow:0 2px 8px rgba(0, 0, 0, 0.08);
+    color:#1d2a33;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .35s var(--glass-spring);
 }
 
-.explorer-item{
-    width:100%;
+.floors-strip-item:hover:not(:disabled):not(.active){
+    background:#ffffff;
+}
+
+.floors-strip-item:active:not(:disabled){
+    transform:scale(.94);
+}
+
+.floors-strip-item.active{
+    background:#1c4a5c;
+    border-color:#1c4a5c;
+    color:#ffffff;
+    box-shadow:0 4px 14px rgba(28, 74, 92, 0.45);
+}
+
+.floors-strip-item:disabled{
+    cursor:default;
+    opacity:.45;
+}
+
+/* =========================================================
+   NIVELES: ETIQUETAS DE UNIDADES SOBRE LA PLANTA
+========================================================= */
+
+/* Reproduce el recorte de la imagen de fondo (cover) */
+.plan-pins{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    container-type:size;
+    pointer-events:none;
+    z-index:10;
+}
+
+.plan-pins-box{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:max(100cqw, 100cqh * var(--plan-ratio));
+    aspect-ratio:var(--plan-ratio);
+    transform:translate(-50%, -50%);
+}
+
+.plan-pin{
+    position:absolute;
+    transform:translate(-50%, -50%);
     display:flex;
     align-items:center;
-    gap:16px;
-    padding:15px 12px;
-    margin-bottom:8px;
-    border:none;
-    background:none;
-    color:rgba(255,255,255,.92);
-    font-size:18px;
-    font-weight:300;
-    letter-spacing:1px;
-    text-align:left;
-    cursor:pointer;
-    transition:.30s;
-}
-
-.explorer-item:hover:not(:disabled){
-    background:rgba(255,255,255,.06);
+    gap:8px;
+    padding:7px 14px 7px 10px;
+    border:1px solid rgba(255, 255, 255, 0.9);
     border-radius:12px;
+    background:rgba(255, 255, 255, 0.92);
+    box-shadow:0 4px 14px rgba(0, 0, 0, 0.25);
+    color:#1d2a33;
+    font-size:17px;
+    font-weight:500;
+    letter-spacing:.5px;
+    white-space:nowrap;
+    cursor:pointer;
+    pointer-events:auto;
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .35s var(--glass-spring);
 }
 
-.explorer-item:disabled{
-    cursor:default;
-    color:rgba(255,255,255,.5);
+.plan-pin:hover{
+    transform:translate(-50%, -50%) scale(1.08);
 }
 
-.indicator{
-    flex-shrink:0;
-    width:3px;
-    height:26px;
-    border-radius:20px;
-    background:transparent;
-    transition:.35s;
+.plan-pin:active{
+    transform:translate(-50%, -50%) scale(.94);
 }
 
-.explorer-item.active .indicator{
-    background:white;
+.plan-pin.is-selected{
+    background:#1c4a5c;
+    border-color:#1c4a5c;
+    color:#ffffff;
 }
 
-.explorer-item:hover:not(:disabled):not(.active) .indicator{
-    background:rgba(255,255,255,.5);
+.plan-pin-dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
 }
 
-.explorer-text{
+.plan-pin-dot.is-disponible{
+    background:#22c55e;
+}
+
+.plan-pin-dot.is-vendido{
+    background:#ef4444;
+}
+
+.plan-pin-dot.is-reservado{
+    background:#f59e0b;
+}
+
+/* Nombre del piso y resumen (bajo VOLVER) */
+.floor-badge{
+    position:absolute;
+    top:80px;
+    left:30px;
     display:flex;
     flex-direction:column;
-    align-items:flex-start;
-    line-height:1.1;
+    gap:4px;
+    padding:14px 22px;
+    border:var(--glass-border);
+    border-radius:20px;
+    background:var(--glass-panel-bg);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    box-shadow:var(--glass-shadow);
+    color:#ffffff;
+    z-index:900;
+    pointer-events:none;
 }
 
-.explorer-text small{
-    margin-top:4px;
-    font-size:16px;
-    color:rgba(255,255,255,.75);
-    letter-spacing:2px;
+.floor-badge strong{
+    font-size:20px;
+    font-weight:300;
+    letter-spacing:4px;
 }
 
-.explorer-text small.soon{
-    font-size:10px;
-    letter-spacing:3px;
-    color:rgba(255,255,255,.45);
-}
-
-.explorer-toggle{
-    position:absolute;
-    top:50%;
-    right:30px;
-    transform:translateY(-50%);
-    width:42px;
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:none;
-    border-radius:14px 0 0 14px;
-    background:rgba(18,22,28,.45);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    color:white;
-    font-size:22px;
-    cursor:pointer;
-    z-index:1001;
-    transition:.35s;
-}
-
-.explorer-toggle:hover{
-    background:rgba(255,255,255,.15);
-}
-
-.explorer-toggle.open{
-    right:290px;
+.floor-badge span{
+    font-size:12px;
+    letter-spacing:1px;
+    color:#5dffa6;
 }
 
 /* =========================================================
@@ -348,90 +386,86 @@
     z-index:10;
 }
 
-/* Cada franja es un hotspot: siempre visible en verde
-   semitransparente, con un pulso suave. */
+/* Cada franja es un hotspot invisible: se ilumina con el color
+   de su estado al pasar el mouse (o con el teclado) y queda
+   iluminada mientras su ficha está abierta.
+   Verde = disponible, rojo = vendido, ámbar = reservado. */
 
 .levels-overlay path{
-    fill:rgba(0, 255, 120, 0.14);
-    stroke:rgba(0, 255, 120, 0.55);
-    stroke-width:1.5;
+    --unit-fill:rgba(0, 255, 120, 0.34);
+    --unit-stroke:#00ff78;
+    --unit-glow:rgba(0, 255, 120, 0.8);
+    fill:transparent;
+    stroke:transparent;
+    stroke-width:2.5;
     vector-effect:non-scaling-stroke;
     pointer-events:all;
     cursor:pointer;
     outline:none;
     -webkit-tap-highlight-color:transparent;
-    animation:levelPulse 2.6s ease-in-out infinite;
     transition:
         fill 0.25s ease,
         stroke 0.25s ease,
         filter 0.25s ease;
 }
 
+.levels-overlay path.is-vendido{
+    --unit-fill:rgba(255, 60, 60, 0.32);
+    --unit-stroke:#ff4646;
+    --unit-glow:rgba(255, 60, 60, 0.7);
+}
+
+.levels-overlay path.is-reservado{
+    --unit-fill:rgba(255, 180, 40, 0.32);
+    --unit-stroke:#ffb428;
+    --unit-glow:rgba(255, 180, 40, 0.7);
+}
+
 .levels-overlay path:hover,
 .levels-overlay path:focus-visible,
-.levels-overlay path:active{
-    animation:none;
-    fill:rgba(0, 255, 120, 0.34);
-    stroke:#00ff78;
-    stroke-width:2.5;
-    filter:drop-shadow(0 0 8px rgba(0, 255, 120, 0.8));
+.levels-overlay path:active,
+.levels-overlay path.is-selected{
+    fill:var(--unit-fill);
+    stroke:var(--unit-stroke);
+    filter:drop-shadow(0 0 8px var(--unit-glow));
 }
 
-@keyframes levelPulse{
-    0%,
-    100%{
-        fill-opacity:1;
-    }
-    50%{
-        fill-opacity:.45;
-    }
+/* Franja de la ficha abierta: borde blanco */
+.levels-overlay path.is-selected{
+    stroke:#ffffff;
+    stroke-width:3;
 }
 
-/* Recorrido en mantenimiento: ámbar, borde punteado, sin pulso */
-
-.levels-overlay path.is-maintenance,
-.levels-overlay path.is-maintenance:hover,
-.levels-overlay path.is-maintenance:focus-visible,
-.levels-overlay path.is-maintenance:active{
-    animation:none;
-    fill:rgba(255, 180, 40, 0.16);
-    stroke:rgba(255, 180, 40, 0.9);
-    stroke-width:1.5;
-    stroke-dasharray:6 5;
-    filter:none;
-    cursor:help;
-}
-
-.levels-overlay path.is-maintenance:hover,
-.levels-overlay path.is-maintenance:focus-visible{
-    fill:rgba(255, 180, 40, 0.3);
-}
-
-@media (prefers-reduced-motion:reduce){
-    .levels-overlay path{
-        animation:none;
+/* Pantallas táctiles (sin mouse): contorno fino del color del
+   estado, sin relleno, para saber dónde tocar. */
+@media (hover:none){
+    .levels-overlay path:not(.is-selected){
+        stroke:var(--unit-stroke);
+        stroke-opacity:0.7;
+        stroke-width:1.5;
     }
 }
 
 /* =========================================================
-   AVISO DE NIVEL (RECORRIDO EN MANTENIMIENTO)
+   FICHA DE UNIDAD
 ========================================================= */
 
+/* Debajo del botón VOLVER */
 .level-card{
     position:absolute;
-    top:30px;
+    top:80px;
     left:50px;
     width:320px;
     min-height:220px;
     padding:32px;
-    background:rgba(18, 22, 28, 0.72);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    border:1px solid rgba(255, 255, 255, 0.25);
-    border-radius:20px;
+    background:var(--glass-panel-bg);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    border:var(--glass-border);
+    border-radius:28px;
     color:white;
     text-align:center;
-    box-shadow:0 20px 60px rgba(0, 0, 0, 0.45);
+    box-shadow:var(--glass-shadow);
     z-index:2000;
     animation:levelCardIn .4s cubic-bezier(.22,1,.36,1) both;
 }
@@ -491,6 +525,238 @@
     opacity:1;
 }
 
+.unit-card{
+    min-height:0;
+    padding:30px 28px 26px;
+}
+
+/* =========================================================
+   TARJETA DEL PISO (sección NIVELES)
+========================================================= */
+
+.floor-card{
+    min-height:0;
+    padding:30px 28px 26px;
+}
+
+.floor-card h2{
+    margin:10px 0 6px;
+    font-size:34px;
+}
+
+.floor-units{
+    margin:18px 0 0;
+    padding:0;
+    list-style:none;
+    text-align:left;
+}
+
+.floor-units button{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 10px;
+    border:none;
+    border-bottom:1px solid rgba(255, 255, 255, 0.12);
+    background:transparent;
+    color:white;
+    font-size:15px;
+    text-align:left;
+    cursor:pointer;
+    transition:background .25s;
+}
+
+.floor-units button:hover{
+    background:rgba(255, 255, 255, 0.08);
+}
+
+.floor-unit-dot{
+    flex-shrink:0;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.floor-unit-dot.is-disponible{
+    background:#00ff78;
+}
+
+.floor-unit-dot.is-vendido{
+    background:#ff4646;
+}
+
+.floor-unit-dot.is-reservado{
+    background:#ffb428;
+}
+
+.floor-unit-name{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+.floor-unit-name small{
+    font-size:12px;
+    opacity:0.6;
+}
+
+.floor-unit-status{
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    opacity:0.8;
+}
+
+.unit-card h2{
+    margin:10px 0 12px;
+    font-size:36px;
+}
+
+.unit-status{
+    display:inline-block;
+    padding:5px 14px;
+    border-radius:20px;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.unit-status.is-disponible{
+    background:rgba(0, 200, 100, 0.22);
+    border:1px solid rgba(0, 255, 120, 0.6);
+}
+
+.unit-status.is-vendido{
+    background:rgba(255, 60, 60, 0.2);
+    border:1px solid rgba(255, 70, 70, 0.6);
+}
+
+.unit-status.is-reservado{
+    background:rgba(255, 180, 40, 0.2);
+    border:1px solid rgba(255, 180, 40, 0.6);
+}
+
+.level-card .unit-price{
+    margin:16px 0 4px;
+    font-size:22px;
+    letter-spacing:1px;
+    opacity:1;
+}
+
+.unit-details{
+    margin:18px 0 22px;
+    text-align:left;
+}
+
+.unit-details div{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 0;
+    border-bottom:1px solid rgba(255, 255, 255, 0.12);
+    font-size:14px;
+}
+
+.unit-details dt{
+    opacity:0.65;
+}
+
+.unit-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.unit-button{
+    display:block;
+    padding:13px 16px;
+    border:var(--glass-border);
+    border-radius:999px;
+    background:var(--glass-bg);
+    box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    color:white;
+    font-size:13px;
+    letter-spacing:2px;
+    text-decoration:none;
+    text-align:center;
+    cursor:pointer;
+    transition:
+        background .3s ease,
+        transform .35s var(--glass-spring);
+}
+
+.unit-button:hover:not(:disabled){
+    background:var(--glass-bg-hover);
+}
+
+.unit-button:active:not(:disabled){
+    transform:scale(.96);
+}
+
+.unit-button.primary{
+    background:white;
+    color:#101828;
+    border-color:white;
+}
+
+.unit-button.primary:hover:not(:disabled){
+    background:rgba(255, 255, 255, 0.85);
+}
+
+.unit-button:disabled{
+    cursor:default;
+    background:transparent;
+    color:rgba(255, 255, 255, 0.5);
+    border-color:rgba(255, 255, 255, 0.25);
+}
+
+/* =========================================================
+   LEYENDA DE ESTADOS
+========================================================= */
+
+.units-legend{
+    position:absolute;
+    left:50%;
+    bottom:40px;
+    transform:translateX(-50%);
+    display:flex;
+    gap:22px;
+    padding:10px 20px;
+    border-radius:999px;
+    background:var(--glass-bg);
+    border:var(--glass-border);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    color:white;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    z-index:900;
+    pointer-events:none;
+}
+
+.units-legend span{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.units-legend span::before{
+    content:"";
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.units-legend .is-disponible::before{
+    background:#00ff78;
+}
+
+.units-legend .is-vendido::before{
+    background:#ff4646;
+}
+
 /* =========================================================
    FLECHA FACHADA TRASERA
 ========================================================= */
@@ -502,11 +768,11 @@
     transform:translateY(-50%);
     width:62px;
     height:62px;
-    border:1px solid rgba(255, 255, 255, 0.22);
+    border:var(--glass-border);
     border-radius:50%;
-    background:rgba(18, 55, 72, 0.78);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
+    background:var(--glass-bg);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
     color:#ffffff;
     font-size:42px;
     font-weight:200;
@@ -517,27 +783,111 @@
     padding:0 0 5px 0;
     z-index:1000;
     cursor:pointer;
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.28),
-        0 0 0 1px rgba(255, 255, 255, 0.04);
+    box-shadow:var(--glass-shadow);
     transition:
-        transform 0.3s ease,
+        transform 0.35s var(--glass-spring),
         background 0.3s ease,
-        border-color 0.3s ease,
         box-shadow 0.3s ease;
 }
 
 .facade-arrow:hover{
-    transform:translateY(-50%) scale(1.08);
-    background:rgba(20, 65, 85, 0.94);
-    border-color:rgba(255, 255, 255, 0.45);
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.35),
-        0 0 20px rgba(255, 255, 255, 0.08);
+    transform:translateY(-50%) scale(1.06);
+    background:var(--glass-bg-hover);
+    box-shadow:var(--glass-shadow-hover);
 }
 
 .facade-arrow:active{
-    transform:translateY(-50%) scale(0.96);
+    transform:translateY(-50%) scale(0.92);
+}
+
+/* =========================================================
+   ZOOM DE LA FACHADA (VER DISPONIBLE)
+========================================================= */
+
+/*
+Escenario: video/imagen + franjas, etiquetas y puntos juntos.
+Mide lo mismo que el video o la imagen (--media-ratio) y
+cubre la pantalla ("cover"): en computador coincide con la
+pantalla; en un celular vertical es más ancho y se recorre
+arrastrando (usePanZoom.js). Se centra con translate(-50%).
+*/
+.zoom-stage{
+    --media-ratio:1.7778;
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:max(100cqw, 100cqh * var(--media-ratio));
+    height:max(100cqh, 100cqw / var(--media-ratio));
+    transform:translate(-50%, -50%);
+    transform-origin:center;
+    transition:transform .35s cubic-bezier(.22,1,.36,1);
+}
+
+.zoom-stage.is-pannable{
+    cursor:grab;
+    touch-action:none;
+}
+
+.zoom-stage.is-dragging{
+    cursor:grabbing;
+    transition:none;
+}
+
+/* Abajo a la izquierda */
+.zoom-controls{
+    position:absolute;
+    left:30px;
+    bottom:30px;
+    display:flex;
+    gap:12px;
+    z-index:1000;
+}
+
+.zoom-button{
+    width:52px;
+    height:52px;
+    padding:0;
+    border:var(--glass-border);
+    border-radius:50%;
+    background:var(--glass-bg);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    color:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:var(--glass-shadow);
+    transition:
+        transform 0.35s var(--glass-spring),
+        background 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.3s ease;
+}
+
+.zoom-button svg{
+    width:24px;
+    height:24px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+}
+
+.zoom-button:hover:not(:disabled){
+    transform:scale(1.06);
+    background:var(--glass-bg-hover);
+    box-shadow:var(--glass-shadow-hover);
+}
+
+.zoom-button:active:not(:disabled){
+    transform:scale(0.92);
+}
+
+/* Sin más zoom en esa dirección: vidrio apagado */
+.zoom-button:disabled{
+    cursor:default;
+    opacity:.45;
 }
 
 /* =========================================================
@@ -654,9 +1004,9 @@
 
     .back-button{
         left:20px;
-        bottom:20px;
-        padding:12px 22px;
-        font-size:13px;
+        top:20px;
+        padding:7px 12px;
+        font-size:11px;
     }
 
     /* La tarjeta baja para no tapar el botón del menú */
@@ -679,6 +1029,29 @@
         margin:6px 0 12px;
     }
 
+    .unit-card{
+        max-height:calc(100% - 200px);
+        overflow-y:auto;
+    }
+
+    .unit-details{
+        margin:12px 0 16px;
+    }
+
+    .unit-details div{
+        padding:7px 0;
+    }
+
+    /* Arriba, bajo VOLVER y el menú: abajo están el zoom
+       y pantalla completa */
+    .units-legend{
+        top:84px;
+        bottom:auto;
+        gap:14px;
+        padding:8px 14px;
+        font-size:10px;
+    }
+
     .facade-arrow{
         left:16px;
         width:52px;
@@ -686,24 +1059,70 @@
         font-size:34px;
     }
 
-    .explorer-panel{
-        width:240px;
+    .zoom-controls{
+        left:16px;
+        bottom:20px;
+        gap:10px;
     }
 
-    .explorer-panel.closed{
-        right:-214px;
+    .zoom-button{
+        width:46px;
+        height:46px;
     }
 
-    .explorer-panel.open{
+    .zoom-button svg{
+        width:22px;
+        height:22px;
+    }
+
+    /* Columna de pisos más angosta, entre el menú
+       y pantalla completa */
+    .floors-strip{
+        top:84px;
+        bottom:84px;
         right:16px;
+        width:76px;
+        gap:6px;
+        padding:6px;
+        border-radius:20px;
     }
 
-    .explorer-toggle{
-        right:16px;
+    .floors-strip-item{
+        height:40px;
+        border-radius:12px;
+        font-size:13px;
     }
 
-    .explorer-toggle.open{
-        right:256px;
+    /* La tarjeta del piso deja libre la columna */
+    .floor-card{
+        right:104px;
+    }
+
+    .plan-pin{
+        gap:6px;
+        padding:5px 10px 5px 8px;
+        font-size:13px;
+        border-radius:10px;
+    }
+
+    .plan-pin-dot{
+        width:10px;
+        height:10px;
+    }
+
+    .floor-badge{
+        top:66px;
+        left:20px;
+        padding:10px 16px;
+    }
+
+    .floor-badge strong{
+        font-size:15px;
+        letter-spacing:3px;
+    }
+
+    .floor-badge span{
+        font-size:11px;
     }
 
 }

@@ -4,6 +4,7 @@ import Viewer from "../Viewer/Viewer";
 import Navbar from "../Navbar/Navbar";
 import Hero from "../Hero/Hero";
 import Fullscreen from "../Fullscreen/Fullscreen";
+import LogoLoader from "../LogoLoader/LogoLoader";
 
 import { SCENES } from "../../data/scenes";
 import useSceneRouter from "../../lib/useSceneRouter";
@@ -12,14 +13,7 @@ import useSceneRouter from "../../lib/useSceneRouter";
 const Tour360 = lazy(() => import("../Tour360/Tour360"));
 const ProjectsMap = lazy(() => import("../ProjectsMap/ProjectsMap"));
 const Brochure = lazy(() => import("../../views/Brochure/Brochure"));
-
-function SceneLoader() {
-    return (
-        <div className="scene-loader">
-            <span className="scene-loader-spinner" />
-        </div>
-    );
-}
+const PointCloud = lazy(() => import("../PointCloud/PointCloud"));
 
 export default function SceneManager() {
 
@@ -32,12 +26,15 @@ export default function SceneManager() {
             {(config.kind === "video" || config.kind === "image") && (
                 <Viewer
                     scene={scene}
+                    room={room}
+                    setRoom={setRoom}
                     goTo={goTo}
                     back={back}
                 />
             )}
 
-            <Suspense fallback={<SceneLoader />}>
+            {/* Mientras se descarga una sección (tour 360, mapa, brochure) */}
+            <Suspense fallback={<LogoLoader />}>
 
                 {config.kind === "tour" && (
                     <Tour360
@@ -58,6 +55,10 @@ export default function SceneManager() {
 
                 {config.kind === "brochure" && (
                     <Brochure onClose={back} />
+                )}
+
+                {config.kind === "pointcloud" && (
+                    <PointCloud onBack={back} />
                 )}
 
             </Suspense>

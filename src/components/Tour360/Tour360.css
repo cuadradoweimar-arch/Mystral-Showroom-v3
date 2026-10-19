@@ -22,7 +22,8 @@
 }
 
 /* ===========================
-   CARGA DEL PANORAMA
+   ERROR AL CARGAR EL PANORAMA
+   (la carga en sí usa LogoLoader)
 =========================== */
 
 .viewer360-loader{
@@ -58,24 +59,12 @@
     pointer-events:auto;
 }
 
-.viewer360-spinner{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,.2);
-    border-top-color:white;
-    animation:viewer360Spin .9s linear infinite;
-}
-
-@keyframes viewer360Spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
 /* ===========================
    HOTSPOT (FLECHA)
 =========================== */
+
+/* Chevrón blanco recostado sobre el piso, con su sombra
+   proyectada debajo, y el nombre del destino abajo */
 
 .tour-hotspot{
     border:none;
@@ -87,37 +76,54 @@
     flex-direction:column;
     align-items:center;
     justify-content:center;
+    -webkit-tap-highlight-color:transparent;
 }
 
 .tour-hotspot-arrow{
-    width:110px;
-    height:80px;
+    width:130px;
+    height:60px;
     display:flex;
     justify-content:center;
     align-items:center;
-    animation:tourHotspotFloat 1.8s ease-in-out infinite;
-    filter:drop-shadow(0 5px 8px rgba(0,0,0,.65));
+    perspective:160px;
 }
 
+/* Inclinada hacia atrás para que se vea apoyada en el piso */
+.tour-hotspot-arrow svg{
+    transform:rotateX(50deg);
+    transform-origin:center bottom;
+    filter:
+        drop-shadow(0 14px 5px rgba(0,0,0,.28))
+        drop-shadow(0 1px 1px rgba(0,0,0,.25));
+    transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+
+.tour-hotspot:hover .tour-hotspot-arrow svg,
+.tour-hotspot:focus-visible .tour-hotspot-arrow svg{
+    transform:rotateX(50deg) translateY(-6px) scale(1.08);
+}
+
+.tour-hotspot:active .tour-hotspot-arrow svg{
+    transform:rotateX(50deg) scale(.94);
+}
+
+/* "HABITACIÓN PRINCIPAL" → "Habitación principal" */
 .tour-hotspot-label{
-    margin-top:-4px;
+    display:inline-block;
+    margin-top:6px;
     color:#fff;
-    font-size:16px;
+    font-size:20px;
     font-weight:400;
-    letter-spacing:2px;
-    text-transform:uppercase;
+    letter-spacing:.3px;
+    text-transform:lowercase;
     white-space:nowrap;
-    text-shadow:0 2px 10px rgba(0,0,0,.95);
+    text-shadow:
+        0 1px 2px rgba(0,0,0,.45),
+        0 2px 10px rgba(0,0,0,.35);
 }
 
-@keyframes tourHotspotFloat{
-    0%,
-    100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-6px);
-    }
+.tour-hotspot-label::first-letter{
+    text-transform:uppercase;
 }
 
 /* ===========================
@@ -197,6 +203,17 @@
 .tour360-back:hover{
     background:rgba(255,255,255,.18);
     transform:translateY(-3px);
+}
+
+/* ===========================
+   ZOOM (encima de VOLVER)
+   El estilo de los botones está en Viewer.css
+=========================== */
+
+.zoom-controls.is-tour{
+    left:35px;
+    bottom:105px;
+    z-index:300;
 }
 
 /* ===========================
@@ -366,9 +383,15 @@
         z-index:500;
     }
 
-    /* Encima del botón VOLVER para no superponerse */
+    .zoom-controls.is-tour{
+        left:20px;
+        bottom:160px;
+        z-index:500;
+    }
+
+    /* Encima de VOLVER y del zoom para no superponerse */
     .drag-indicator{
-        bottom:165px;
+        bottom:225px;
         z-index:350;
         white-space:nowrap;
     }
@@ -379,7 +402,7 @@
     }
 
     .tour-hotspot-label{
-        font-size:14px;
+        font-size:16px;
     }
 
 }

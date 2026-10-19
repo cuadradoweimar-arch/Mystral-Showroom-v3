@@ -6,7 +6,7 @@
 }
 
 /*=====================================
-    BOTÓN EXPLORAR
+    BOTÓN INGRESAR
 ======================================*/
 
 .hero-button{
@@ -16,24 +16,33 @@
     transform:translateX(-50%);
     width:260px;
     height:68px;
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,.35);
-    background:rgba(255,255,255,.10);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
+    border-radius:999px;
+    border:var(--glass-border);
+    background:var(--glass-bg);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
     color:white;
     font-size:20px;
     letter-spacing:2px;
     cursor:pointer;
-    transition:.35s;
+    transition:
+        background .35s ease,
+        color .35s ease,
+        box-shadow .35s ease,
+        transform .4s var(--glass-spring);
     pointer-events:auto;
 }
 
 .hero-button:hover{
-    background:white;
+    background:rgba(255,255,255,.9);
     color:#101828;
     transform:translateX(-50%) translateY(-3px);
-    box-shadow:0 15px 35px rgba(255,255,255,.18);
+    box-shadow:var(--glass-shadow-hover);
+}
+
+.hero-button:active{
+    transform:translateX(-50%) scale(.95);
 }
 
 /*=====================================
@@ -45,21 +54,25 @@
     left:40px;
     bottom:45px;
     padding:14px 28px;
-    background:rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.45);
-    border-radius:30px;
+    background:var(--glass-bg);
+    border:var(--glass-border);
+    box-shadow:var(--glass-shadow);
+    border-radius:999px;
     color:#fff;
     font-size:14px;
     letter-spacing:3px;
     cursor:pointer;
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    transition:.3s;
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    transition:
+        background .3s ease,
+        box-shadow .3s ease;
     pointer-events:auto;
 }
 
 .hero-projects:hover{
-    background:rgba(255,255,255,.18);
+    background:var(--glass-bg-hover);
+    box-shadow:var(--glass-shadow-hover);
 }
 
 /* =====================================

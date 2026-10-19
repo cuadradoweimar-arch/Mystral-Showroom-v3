@@ -46,6 +46,50 @@
     letter-spacing: 7px;
 }
 
+/* Selector de ciudad (debajo del título) */
+.projects-map-cities {
+    position: absolute;
+    top: 120px;
+    left: 45px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.projects-map-cities button {
+    padding: 8px 16px;
+    border: var(--glass-border);
+    border-radius: 999px;
+    background: var(--glass-bg);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    color: #fff;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.35s var(--glass-spring);
+}
+
+.projects-map-cities button:hover:not(.active) {
+    background: var(--glass-bg-hover);
+}
+
+.projects-map-cities button:active {
+    transform: scale(0.94);
+}
+
+.projects-map-cities button.active {
+    background: rgba(255, 255, 255, 0.92);
+    color: #111;
+}
+
 .projects-map-back {
     position: absolute;
     left: 45px;
@@ -94,6 +138,19 @@
         font-size: 20px;
     }
 
+    .projects-map-cities {
+        top: 92px;
+        left: 24px;
+        right: 24px;
+        gap: 6px;
+    }
+
+    .projects-map-cities button {
+        padding: 7px 12px;
+        font-size: 10px;
+        letter-spacing: 1.5px;
+    }
+
     .projects-map-title h1 {
         font-size: 15px;
         letter-spacing: 5px;
@@ -109,51 +166,130 @@
    TARJETA DEL PROYECTO
 ========================================= */
 
+/* Tarjeta compacta: ancho fijo y márgenes reducidos */
+.maplibregl-popup-content:has(.project-popup) {
+    padding: 10px 10px 10px;
+}
+
 .project-popup {
-    padding: 4px;
+    width: 170px;
     font-family: "Montserrat", sans-serif;
-    min-width: 210px;
+}
+
+/* =========================================
+   TARJETA CON FOTO: la foto ocupa toda la
+   tarjeta; texto y botón van encima
+========================================= */
+
+.maplibregl-popup-content:has(.project-popup.has-image) {
+    padding: 0;
+    overflow: hidden;
+    background: #0d0d0d;
+}
+
+/* Punta del globo en el tono oscuro de la foto */
+.maplibregl-popup-anchor-bottom:has(.has-image) .maplibregl-popup-tip {
+    border-top-color: #0d0d0d;
+}
+
+.maplibregl-popup-anchor-top:has(.has-image) .maplibregl-popup-tip {
+    border-bottom-color: #0d0d0d;
+}
+
+/* La ✕ de cerrar, legible sobre la foto */
+.maplibregl-popup-content:has(.has-image) .maplibregl-popup-close-button {
+    z-index: 2;
+    color: #fff;
+    font-size: 18px;
+    text-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
+
+.project-popup.has-image {
+    width: 180px;
+}
+
+.project-popup-media {
+    position: relative;
+}
+
+.project-popup-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+}
+
+/* Degradado oscuro abajo para que el texto se lea */
+.project-popup-info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 46px 10px 10px;
+    background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.6) 35%, rgba(0,0,0,.88));
+}
+
+.project-popup.has-image .project-popup-label {
+    color: rgba(255,255,255,.75);
+}
+
+.project-popup.has-image h2 {
+    color: #fff;
+}
+
+.project-popup.has-image p {
+    margin: 0 0 9px;
+    color: rgba(255,255,255,.85);
+}
+
+/* Botón claro sobre la foto */
+.project-popup.has-image button {
+    background: rgba(255,255,255,.92);
+    color: #111;
+}
+
+.project-popup.has-image button:hover {
+    background: #fff;
 }
 
 .project-popup-label {
-    font-size: 10px;
-    letter-spacing: 3px;
+    font-size: 8px;
+    letter-spacing: 2px;
     color: #777;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
 }
 
 .project-popup h2 {
-    margin: 0 0 8px;
+    margin: 0 0 5px;
     font-family: "Belleza", sans-serif;
-    font-size: 25px;
-    letter-spacing: 4px;
+    font-size: 18px;
+    letter-spacing: 3px;
     font-weight: 400;
 }
 
 .project-popup p {
-    margin: 0 0 16px;
-    font-size: 12px;
-    line-height: 1.6;
+    margin: 0 0 10px;
+    font-size: 11px;
+    line-height: 1.45;
     color: #555;
 }
 
 .project-popup button {
     width: 100%;
-    padding: 11px 12px;
+    padding: 8px 10px;
     border: none;
     background: #111;
     color: white;
     font-family: "Montserrat", sans-serif;
-    font-size: 10px;
-    letter-spacing: 2px;
+    font-size: 8.5px;
+    letter-spacing: 1.5px;
     cursor: pointer;
     transition: 0.3s ease;
 }
 
 .project-popup button:hover {
     background: #333;
-}
-/* =========================================
+}/* =========================================
    NOMBRES DE PROYECTOS
 ========================================= */
 

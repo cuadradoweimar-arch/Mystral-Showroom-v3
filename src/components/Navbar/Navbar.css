@@ -1,17 +1,205 @@
+/* =====================================================
+   BOTÓN HAMBURGUESA (arriba a la derecha)
+===================================================== */
+
+.menu-button{
+
+    position:fixed;
+
+    top:30px;
+
+    right:30px;
+
+    width:52px;
+
+    height:52px;
+
+    padding:0;
+
+    border:var(--glass-border);
+
+    border-radius:50%;
+
+    background:var(--glass-bg);
+
+    box-shadow:var(--glass-shadow);
+
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:6px;
+
+    cursor:pointer;
+
+    z-index:4000;
+
+    transition:
+        background .3s ease,
+        box-shadow .3s ease,
+        transform .35s var(--glass-spring);
+
+}
+
+.menu-button:hover{
+
+    background:var(--glass-bg-hover);
+
+    box-shadow:var(--glass-shadow-hover);
+
+    transform:scale(1.06);
+
+}
+
+.menu-button:active{
+
+    transform:scale(.92);
+
+}
+
+/* Tres líneas que se cruzan en ✕ al abrir */
+.menu-button span{
+
+    width:22px;
+
+    height:2px;
+
+    border-radius:2px;
+
+    background:#ffffff;
+
+    transition:transform .35s ease, opacity .25s ease;
+
+}
+
+.menu-button.open span:nth-child(1){
+
+    transform:translateY(8px) rotate(45deg);
+
+}
+
+.menu-button.open span:nth-child(2){
+
+    opacity:0;
+
+}
+
+.menu-button.open span:nth-child(3){
+
+    transform:translateY(-8px) rotate(-45deg);
+
+}
+
+/* =====================================================
+   FONDO OSCURO (clic fuera = cerrar)
+===================================================== */
+
+.menu-backdrop{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.25);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:opacity .35s ease;
+
+    z-index:2999;
+
+}
+
+.menu-backdrop.open{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+/* =====================================================
+   PANEL LATERAL (entra desde la derecha)
+   Lámina de vidrio flotante, separada de los bordes
+===================================================== */
+
 .scene-menu{
 
     position:fixed;
 
-    top:50%;
-    right:-90px;
+    top:12px;
 
-    transform:translateY(-50%);
+    right:12px;
 
-    width:380px;
+    bottom:12px;
 
-    z-index:1000;
+    width:340px;
 
-    pointer-events:none;
+    max-width:calc(100vw - 24px);
+
+    overflow-y:auto;
+
+    padding:110px 36px 40px;
+
+    box-sizing:border-box;
+
+    background:var(--glass-panel-bg);
+
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+
+    border:var(--glass-border);
+
+    border-radius:32px;
+
+    box-shadow:var(--glass-shadow);
+
+    transform:translateX(calc(100% + 24px));
+
+    visibility:hidden;
+
+    transition:transform .4s cubic-bezier(.22,1,.36,1), visibility 0s .4s;
+
+    z-index:3000;
+
+}
+
+.scene-menu.open{
+
+    transform:none;
+
+    visibility:visible;
+
+    transition:transform .4s cubic-bezier(.22,1,.36,1);
+
+}
+
+.scene-menu::before{
+
+    content:"MYSTRAL";
+
+    position:absolute;
+
+    top:38px;
+
+    left:36px;
+
+    color:#ffffff;
+
+    font-family:"Belleza",sans-serif;
+
+    font-size:26px;
+
+    letter-spacing:4px;
 
 }
 
@@ -23,8 +211,6 @@
 
     align-items:stretch;
 
-    pointer-events:auto;
-
 }
 
 /* ==========================
@@ -35,13 +221,13 @@
 
     width:100%;
 
-    padding:20px 0;
+    padding:18px 0;
 
     background:transparent;
 
     border:none;
 
-    border-bottom:1px solid rgba(255,255,255,.12);
+    border-bottom:1px solid rgba(255,255,255,.10);
 
     display:flex;
 
@@ -55,11 +241,11 @@
 
     font-family:"Montserrat",sans-serif;
 
-    font-size:20px;
+    font-size:17px;
 
     font-weight:300;
 
-    letter-spacing:6px;
+    letter-spacing:4px;
 
     text-transform:uppercase;
 
@@ -112,143 +298,29 @@
    MOBILE
 ===================================================== */
 
-.mobile-menu-button{
-
-    display:none;
-
-}
-
 @media (max-width:900px){
 
-.mobile-menu-button{
-
-    display:flex;
-
-    position:fixed;
+.menu-button{
 
     top:20px;
 
-    left:20px;
-
-    width:52px;
-
-    height:52px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:rgba(0,0,0,.35);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-
-    color:white;
-
-    font-size:28px;
-
-    justify-content:center;
-
-    align-items:center;
-
-    cursor:pointer;
-
-    z-index:4000;
-
-    transition:.3s;
+    right:20px;
 
 }
-
-.mobile-menu-button:hover{
-
-    background:rgba(255,255,255,.18);
-
-    transform:scale(1.05);
-
-}
-
-/* ==========================
-   MENÚ LATERAL
-========================== */
 
 .scene-menu{
 
-    position:fixed;
-
-    top:0;
-
-    left:-300px;
-
     width:280px;
 
-    height:100vh;
-
-    transform:none;
-
-    background:rgba(8,12,18,.88);
-
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
-
-    transition:left .35s ease;
-
-    padding-top:90px;
-
-    z-index:3000;
-
-    pointer-events:auto;
-
-}
-
-.scene-menu.open{
-
-    left:0;
+    padding:90px 24px 30px;
 
 }
 
 .scene-menu::before{
 
-    content:"MYSTRAL";
-
-    position:absolute;
-
     top:28px;
 
-    left:88px; /* a la derecha del botón ✕ */
-
-    color:#ffffff;
-
-    font-family:"Belleza",sans-serif;
-
-    font-size:26px;
-
-    letter-spacing:4px;
-
-}
-
-.scene-menu-items{
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:stretch;
-
-    padding:0 24px;
-
-}
-
-.scene-item{
-
-    width:100%;
-
-    padding:18px 0;
-
-    font-size:18px;
-
-    letter-spacing:3px;
-
-    border-bottom:1px solid rgba(255,255,255,.10);
+    left:24px;
 
 }
 

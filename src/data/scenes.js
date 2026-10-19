@@ -1,5 +1,4 @@
 import apartment from "../assets/images/apartments/apartment-01.jpg";
-import apartmentsOverview from "../assets/images/apartments/apartments-overview.jpg";
 import levels from "../assets/images/levels/levels.jpg";
 
 /*
@@ -7,7 +6,7 @@ import levels from "../assets/images/levels/levels.jpg";
 CONFIGURACIÓN DE ESCENAS
 
 path:   ruta en la URL (#/path)
-kind:   video | image | tour | map | brochure
+kind:   video | image | tour | map | brochure | pointcloud
 back:   escena a la que vuelve "VOLVER" si no hay historial
 navbar: muestra el menú lateral
 =====================================================
@@ -101,19 +100,12 @@ export const SCENES = {
         navbar: false,
     },
 
+    // El piso elegido va en la URL: #/niveles/8
     levels: {
         path: "niveles",
         kind: "image",
         image: levels,
         back: "home",
-        navbar: false,
-    },
-
-    apartmentsOverview: {
-        path: "apartamentos-3-8",
-        kind: "image",
-        image: apartmentsOverview,
-        back: "levels",
         navbar: false,
     },
 
@@ -127,6 +119,14 @@ export const SCENES = {
     brochure: {
         path: "brochure",
         kind: "brochure",
+        back: "home",
+        navbar: false,
+    },
+
+    // Nube de puntos de la captura D5 XR (public/nube/mystral.ply)
+    pointCloud: {
+        path: "modelo-3d",
+        kind: "pointcloud",
         back: "home",
         navbar: false,
     },

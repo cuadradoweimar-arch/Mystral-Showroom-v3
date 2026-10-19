@@ -1,0 +1,129 @@
+/* =========================================================
+   MODELO 3D — NUBE DE PUNTOS
+========================================================= */
+
+/* Por debajo del botón de pantalla completa (10000) */
+.point-cloud{
+    position:fixed;
+    inset:0;
+    background:#05070b;
+    z-index:9999;
+    touch-action:none;
+}
+
+.point-cloud canvas{
+    display:block;
+    cursor:grab;
+}
+
+.point-cloud canvas:active{
+    cursor:grabbing;
+}
+
+.point-cloud-info{
+    position:absolute;
+    top:40px;
+    left:45px;
+    color:#fff;
+    pointer-events:none;
+    text-shadow:0 2px 12px rgba(0,0,0,.5);
+}
+
+.point-cloud-info span{
+    display:block;
+    margin-bottom:8px;
+    font-family:"Belleza",sans-serif;
+    font-size:22px;
+    letter-spacing:5px;
+}
+
+.point-cloud-info h1{
+    margin:0;
+    font-size:18px;
+    font-weight:300;
+    letter-spacing:7px;
+}
+
+.point-cloud-hint{
+    position:absolute;
+    left:50%;
+    bottom:40px;
+    transform:translateX(-50%);
+    margin:0;
+    color:rgba(255,255,255,.6);
+    font-size:12px;
+    letter-spacing:2px;
+    white-space:nowrap;
+    pointer-events:none;
+    animation:pointCloudHint 6s forwards;
+}
+
+@keyframes pointCloudHint{
+    0%, 75%{ opacity:1; }
+    100%{ opacity:0; }
+}
+
+.point-cloud-back{
+    position:absolute;
+    left:30px;
+    bottom:30px;
+    padding:9px 18px;
+    border:var(--glass-border);
+    border-radius:999px;
+    background:var(--glass-bg);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    color:#fff;
+    font-size:12px;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:background .3s ease, transform .35s var(--glass-spring);
+}
+
+.point-cloud-back:hover{
+    background:var(--glass-bg-hover);
+}
+
+.point-cloud-back:active{
+    transform:scale(.94);
+}
+
+.point-cloud-error{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:rgba(255,255,255,.8);
+    font-size:13px;
+    letter-spacing:3px;
+}
+
+@media (max-width:900px){
+
+    .point-cloud-info{
+        top:28px;
+        left:24px;
+    }
+
+    .point-cloud-info span{
+        font-size:20px;
+    }
+
+    .point-cloud-info h1{
+        font-size:15px;
+        letter-spacing:5px;
+    }
+
+    .point-cloud-hint{
+        bottom:90px;
+        font-size:10px;
+    }
+
+    .point-cloud-back{
+        left:20px;
+        bottom:20px;
+    }
+
+}

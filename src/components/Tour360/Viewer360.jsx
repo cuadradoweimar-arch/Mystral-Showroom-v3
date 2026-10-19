@@ -4,6 +4,8 @@ import * as THREE from "three";
 import { useEffect, useState } from "react";
 
 import { loadPanoramaTexture, prefetchPanoramas } from "./panoramaLoader";
+import ZoomControls from "../Viewer/ZoomControls";
+import LogoLoader from "../LogoLoader/LogoLoader";
 
 
 // =========================================================
@@ -30,13 +32,14 @@ function TourHotspot({ position, label, onClick }) {
                     }}
                 >
 
+                    {/* Chevrón ancho y bajo, recostado sobre el piso (CSS) */}
                     <span className="tour-hotspot-arrow">
 
-                        <svg width="90" height="55" viewBox="0 0 90 55" fill="none">
+                        <svg width="120" height="44" viewBox="0 0 120 44" fill="none">
                             <path
-                                d="M12 38 L45 10 L78 38"
+                                d="M12 34 L60 12 L108 34"
                                 stroke="#FFFFFF"
-                                strokeWidth="10"
+                                strokeWidth="11"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             />
@@ -61,39 +64,51 @@ function TourHotspot({ position, label, onClick }) {
 // PANORAMA
 // =========================================================
 
+// - 128×64 segmentos: las líneas rectas del render no se
+//   quiebran en las caras de la esfera ni se deforman en los polos.
+// - toneMapped={false}: muestra los colores exactos del render
+//   (si no, three aplica su curva de tono y los apaga).
 function Panorama({ texture }) {
 
     return (
         <mesh scale={[-1, 1, 1]}>
-            <sphereGeometry args={[500, 64, 32]} />
-            <meshBasicMaterial map={texture} side={THREE.BackSide} />
+            <sphereGeometry args={[500, 128, 64]} />
+            <meshBasicMaterial map={texture} side={THREE.BackSide} toneMapped={false} />
         </mesh>
     );
 }
 
 
 // =========================================================
-// ZOOM DE CÁMARA (RUEDA DEL MOUSE / DOBLE CLIC)
+// ZOOM DE CÁMARA (BOTONES / RUEDA DEL MOUSE / DOBLE CLIC)
+// El campo de visión (fov) vive fuera del Canvas para que
+// los botones + / − puedan cambiarlo.
 // =========================================================
 
-function CameraZoom() {
+const MIN_FOV = 35;
+const MAX_FOV = 75;
+const FOV_STEP = 10;
+
+const clampFov = (fov) => THREE.MathUtils.clamp(fov, MIN_FOV, MAX_FOV);
+
+function CameraZoom({ fov, setFov }) {
 
     const { camera, gl, invalidate } = useThree();
 
     useEffect(() => {
+        camera.fov = fov;
+        camera.updateProjectionMatrix();
+        invalidate();
+    }, [camera, fov, invalidate]);
 
-        const setFov = (fov) => {
-            camera.fov = THREE.MathUtils.clamp(fov, 35, 75);
-            camera.updateProjectionMatrix();
-            invalidate();
-        };
+    useEffect(() => {
 
         const handleWheel = (e) => {
             e.preventDefault();
-            setFov(camera.fov + e.deltaY * 0.03);
+            setFov((current) => clampFov(current + e.deltaY * 0.03));
         };
 
-        const handleDoubleClick = () => setFov(75);
+        const handleDoubleClick = () => setFov(MAX_FOV);
 
         const canvas = gl.domElement;
 
@@ -105,7 +120,7 @@ function CameraZoom() {
             canvas.removeEventListener("dblclick", handleDoubleClick);
         };
 
-    }, [camera, gl, invalidate]);
+    }, [gl, setFov]);
 
     return null;
 }
@@ -171,7 +186,17 @@ function usePanoramaTexture(url) {
 
 export default function Viewer360({ image, hotspots = [], prefetch = [] }) {
 
-    const { texture, ready, progress, error, retry } = usePanoramaTexture(image);
+    const { texture, ready, error, retry } = usePanoramaTexture(image);
+
+    const [fov, setFov] = useState(MAX_FOV);
+
+    // Cada habitación empieza sin zoom
+    const [previousImage, setPreviousImage] = useState(image);
+
+    if (previousImage !== image) {
+        setPreviousImage(image);
+        setFov(MAX_FOV);
+    }
 
     // Cuando el panorama visible terminó de cargar, se descargan
     // en segundo plano las habitaciones a las que llevan sus flechas.
@@ -188,7 +213,8 @@ export default function Viewer360({ image, hotspots = [], prefetch = [] }) {
             <Canvas
                 frameloop="demand"
                 camera={{ position: [0, 0, 0.1], fov: 75 }}
-                dpr={[1, 1.5]}
+                // Resolución completa en pantallas retina / 2x
+                dpr={[1, 2]}
                 gl={{ antialias: false, powerPreference: "high-performance" }}
                 style={{ width: "100%", height: "100%" }}
             >
@@ -206,7 +232,7 @@ export default function Viewer360({ image, hotspots = [], prefetch = [] }) {
                     />
                 ))}
 
-                <CameraZoom />
+                <CameraZoom fov={fov} setFov={setFov} />
 
                 <OrbitControls
                     enablePan={false}
@@ -218,22 +244,25 @@ export default function Viewer360({ image, hotspots = [], prefetch = [] }) {
 
             </Canvas>
 
-            {!ready && (
+            {/* Menor fov = más cerca */}
+            <ZoomControls
+                className="is-tour"
+                canZoomIn={fov > MIN_FOV}
+                canZoomOut={fov < MAX_FOV}
+                onZoomIn={() => setFov((current) => clampFov(current - FOV_STEP))}
+                onZoomOut={() => setFov((current) => clampFov(current + FOV_STEP))}
+            />
+
+            {/* Carga del panorama: la misma placa con el logo */}
+            {!ready && !error && (
+                <LogoLoader className={`is-embedded ${texture ? "is-overlay" : ""}`} />
+            )}
+
+            {!ready && error && (
 
                 <div className={`viewer360-loader ${texture ? "is-overlay" : ""}`}>
-
-                    {error ? (
-                        <>
-                            <span>No se pudo cargar el panorama</span>
-                            <button onClick={retry}>REINTENTAR</button>
-                        </>
-                    ) : (
-                        <>
-                            <span className="viewer360-spinner" />
-                            <span>CARGANDO {Math.round(progress * 100)}%</span>
-                        </>
-                    )}
-
+                    <span>No se pudo cargar el panorama</span>
+                    <button onClick={retry}>REINTENTAR</button>
                 </div>
 
             )}
