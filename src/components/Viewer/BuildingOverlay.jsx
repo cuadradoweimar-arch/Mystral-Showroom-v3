@@ -10,7 +10,7 @@ MÁSCARA DEL EDIFICIO (escena INGRESO)
 
 Mismo comportamiento que las franjas de la fachada:
 invisible hasta pasar el mouse; en pantallas táctiles
-muestra un contorno fino. viewBox = tamaño del video y
+tampoco se ve hasta tocarlo. viewBox = tamaño del video y
 "slice" = object-fit: cover, para quedar alineada.
 =====================================================
 */

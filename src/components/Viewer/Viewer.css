@@ -436,16 +436,6 @@
     stroke-width:3;
 }
 
-/* Pantallas táctiles (sin mouse): contorno fino del color del
-   estado, sin relleno, para saber dónde tocar. */
-@media (hover:none){
-    .levels-overlay path:not(.is-selected){
-        stroke:var(--unit-stroke);
-        stroke-opacity:0.7;
-        stroke-width:1.5;
-    }
-}
-
 /* =========================================================
    FICHA DE UNIDAD
 ========================================================= */
