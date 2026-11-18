@@ -117,6 +117,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meshoptimizer@0.20.0/meshopt_decoder.js"></script>
 <script>
 (async function(){
 const W=()=>innerWidth,H=()=>innerHeight;
@@ -251,7 +253,7 @@ if(ROUTE){
 
 // ---------- proyectos ----------
 const projects=[
-  {id:'mystral',kind:'project',name:'Mystral',tag:'Torre residencial · Frente al Río Sinú',desc:'Apartamentos frente a la Ronda del Sinú. Recorrido 360°, modelo 3D, acabados y disponibilidad.',x:MYS[0],z:MYS[1],h:96,w:30,stats:[12,5,23],url:'https://mystral-showroom-v3.vercel.app'}
+  {id:'mystral',kind:'project',name:'Mystral',tag:'Torre residencial · Frente al Río Sinú',desc:'Apartamentos frente a la Ronda del Sinú. Recorrido 360°, modelo 3D, acabados y disponibilidad.',x:MYS[0],z:MYS[1],h:56,w:30,stats:[12,5,23],url:'https://mystral-showroom-v3.vercel.app'}
 ];
 const places=[
   {id:'rio',kind:'place',name:'Río Sinú · Ronda',tag:'Naturaleza · Malecón',desc:'La Ronda del Sinú: parque lineal a orillas del río, para caminar, trotar y ver el atardecer.',x:-284,z:182,h:20,cls:'green'},
@@ -269,6 +271,7 @@ projects.forEach(p=>{
     const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(p.w,p.h,p.w)),new THREE.LineBasicMaterial({color:0xff8a95}));e.position.y=p.h/2;g.add(e);
     const beam=new THREE.Mesh(new THREE.CylinderGeometry(2,5,700,12,1,true),new THREE.MeshBasicMaterial({color:ACC,transparent:true,opacity:.13,depthWrite:false,blending:THREE.AdditiveBlending}));beam.position.y=p.h+350;g.add(beam);
     m.userData.id=p.id;heroHits.push(m);
+    if(p.id==='mystral')loadModel(p,g,m,beam);
   }else{
     const pad=new THREE.Mesh(new THREE.BoxGeometry(50,1,50),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.06}));pad.position.y=.5;g.add(pad);
     const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(30,70,30)),new THREE.LineDashedMaterial({color:0xffffff,dashSize:3,gapSize:3,transparent:true,opacity:.5}));e.computeLineDistances();e.position.y=35;g.add(e);p.ghost=e;
@@ -362,6 +365,26 @@ sg.addEventListener('click',e=>{const d=e.target.closest('[data-id]');if(!d)retu
 q.addEventListener('keydown',e=>{if(e.key==='Enter'){const d=sg.querySelector('[data-id]');if(d)d.click();}});
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('#search'))sg.style.display='none';});
 
+// ---------- modelo real de Mystral ----------
+// mystral.glb: modelo del edificio optimizado (sin muebles ni carros), base en el
+// origen y en metros. Mientras carga se ve la torre provisional.
+// Orientación: entrada hacia la calle (norte) y lado diagonal hacia el río.
+const modelMats=[],modelLights=[];
+function loadModel(p,g,m,beam){
+  if(!THREE.GLTFLoader)return;
+  const L=new THREE.GLTFLoader();if(window.MeshoptDecoder)L.setMeshoptDecoder(MeshoptDecoder);
+  L.load('mystral.glb',gl=>{
+    const o=gl.scene;o.rotation.y=2.74;g.add(o);
+    o.traverse(c=>{if(!c.isMesh)return;const mt=c.material;if(mt.emissive){mt.emissive.copy(mt.color).lerp(new THREE.Color(0xffffff),.22);modelMats.push(mt);}});
+    // de noche: luz cálida que ilumina la fachada
+    [[-40,30,30],[40,30,-30]].forEach(([x,y,z])=>{const l=new THREE.PointLight(0xffd9a8,0,170,1.4);l.position.set(x,y,z);g.add(l);modelLights.push(l);});
+    g.children.forEach(ch=>{if(ch!==o&&ch!==m&&ch!==beam&&ch!==p.ring)ch.visible=false;});
+    // la torre queda invisible pero sigue sirviendo para tocar el edificio
+    m.material=new THREE.MeshBasicMaterial({visible:false});m.scale.set(42,54,42);m.position.y=27;
+    p.mat=null;applyDay(dayK);
+  },undefined,e=>console.warn('modelo Mystral:',e));
+}
+
 // ---------- modo día / noche ----------
 // Cada color de la noche tiene su equivalente de día; se interpolan al cambiar
 const DAYC={0x070912:0xcfdfec,0x0c0e16:0xc9c6be,0x0f2a1c:0xa9d39a,0x0f2340:0x86bbe6,0x171a24:0xfafafa,0x1f2331:0xf6e2a0,
@@ -393,6 +416,7 @@ function applyDay(k){
       if(e.blend0===THREE.AdditiveBlending&&!e.lamp){m.blending=half?THREE.NormalBlending:THREE.AdditiveBlending;m.needsUpdate=true;}
       if(e.night){m.map=half?e.day:e.night;m.needsUpdate=true;}}});
   dayMid=half;
+  modelMats.forEach(mt=>{mt.emissiveIntensity=.38*(1-k);});modelLights.forEach(l=>{l.intensity=2.2*(1-k);});
   lights.forEach(L=>{L.l.intensity=L.i0+(L.i1-L.i0)*k;L.l.color.copy(L.c0).lerp(L.c1,k);if(L.g0)L.l.groundColor.copy(L.g0).lerp(L.g1,k);});
 }
 const dayBtn=document.getElementById('dayBtn');
