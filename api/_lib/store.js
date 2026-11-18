@@ -61,6 +61,9 @@ async function postgres() {
         updated_at timestamptz not null default now(),
         updated_by text
     )`;
+    // datos comerciales privados (sólo panel): comprador y descuento %
+    await sql`alter table unit_status add column if not exists buyer text`;
+    await sql`alter table unit_status add column if not exists discount numeric`;
     await sql`create table if not exists clients (
         id bigserial primary key,
         name text not null,
@@ -85,8 +88,17 @@ const rowOut = (row) => row && ({
 const pgStore = {
     async unitStatuses() {
         const sql = await postgres();
-        const rows = await sql`select id, status, updated_at, updated_by from unit_status`;
-        return rows;
+        const rows = await sql`select id, status, buyer, discount, updated_at, updated_by from unit_status`;
+        return rows.map((r) => ({ ...r, discount: r.discount === null ? null : Number(r.discount) }));
+    },
+    async updateUnit(id, fields, by, baseStatus) {
+        const sql = await postgres();
+        const [cur] = await sql`select * from unit_status where id = ${id}`;
+        const next = { status: baseStatus, buyer: null, discount: null, ...(cur || {}), ...fields };
+        await sql`insert into unit_status (id, status, buyer, discount, updated_at, updated_by)
+                  values (${id}, ${next.status}, ${next.buyer}, ${next.discount}, now(), ${by})
+                  on conflict (id) do update set status = excluded.status, buyer = excluded.buyer,
+                  discount = excluded.discount, updated_at = now(), updated_by = excluded.updated_by`;
     },
     async setUnitStatus(id, status, by) {
         const sql = await postgres();
@@ -139,7 +151,13 @@ const fileStore = {
     async unitStatuses() {
         const { read } = await fileIO();
         const data = await read();
-        return Object.entries(data.units).map(([id, value]) => ({ id, ...value }));
+        return Object.entries(data.units).map(([id, value]) => ({ id, buyer: null, discount: null, ...value }));
+    },
+    async updateUnit(id, fields, by, baseStatus) {
+        const { read, write } = await fileIO();
+        const data = await read();
+        data.units[id] = { status: baseStatus, buyer: null, discount: null, ...(data.units[id] || {}), ...fields, updated_at: new Date().toISOString(), updated_by: by };
+        await write(data);
     },
     async setUnitStatus(id, status, by) {
         const { read, write } = await fileIO();

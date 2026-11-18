@@ -87,3 +87,18 @@ const money = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP
 export const formatMoney = (value) => money.format(value);
 const area = new Intl.NumberFormat("es-CO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 export const formatArea = (value) => `${area.format(value)} m²`;
+
+// Listado de ventas: valores con el descuento de cada unidad
+export function saleOf(unit) {
+    const discount = unit.discount ?? 0;
+    // sin redondear: así los totales cuadran con la hoja (se redondea al mostrar)
+    const final = unit.price * (1 - discount / 100);
+    return {
+        m2: unit.price / unit.area,
+        discount,
+        m2Final: final / unit.area,
+        final,
+    };
+}
+const pct = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 2 });
+export const formatPct = (value) => `${pct.format(value)} %`;

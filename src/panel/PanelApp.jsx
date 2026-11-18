@@ -9,7 +9,7 @@ import { followUp, UNITS } from "./util";
 const TABS = [
     { id: "panel", label: "Mi panel" },
     { id: "clientes", label: "Clientes" },
-    { id: "unidades", label: "Departamentos" },
+    { id: "unidades", label: "Listado de ventas" },
 ];
 
 export default function PanelApp() {
@@ -46,18 +46,26 @@ export default function PanelApp() {
     // Inventario con el estado vigente (base del archivo + cambios guardados)
     const units = useMemo(() => {
         const byId = Object.fromEntries(unitRows.map((r) => [r.id, r]));
-        return UNITS.map((u) => ({ ...u, status: byId[u.id]?.status || u.status, updated_at: byId[u.id]?.updated_at, updated_by: byId[u.id]?.updated_by }));
+        return UNITS.map((u) => {
+            const row = byId[u.id] || {};
+            return { ...u, status: row.status || u.status, buyer: row.buyer || "", discount: row.discount ?? null, updated_at: row.updated_at, updated_by: row.updated_by };
+        });
     }, [unitRows]);
 
-    const setUnitStatus = useCallback(async (id, status) => {
+    // Cambia estado, comprador o descuento de una unidad (se ve al instante y se guarda)
+    const updateUnit = useCallback(async (id, fields) => {
         const previous = unitRows;
-        setUnitRows((rows) => [...rows.filter((r) => r.id !== id), { id, status, updated_at: new Date().toISOString(), updated_by: session?.name }]);
+        setUnitRows((rows) => {
+            const base = rows.find((r) => r.id === id) || { id, status: UNITS.find((u) => u.id === id)?.status };
+            return [...rows.filter((r) => r.id !== id), { ...base, ...fields, updated_at: new Date().toISOString(), updated_by: session?.name }];
+        });
         try {
-            await guard(api("units", { method: "PATCH", body: { id, status } }));
+            await guard(api("units", { method: "PATCH", body: { id, ...fields } }));
         } catch {
             setUnitRows(previous);
         }
     }, [unitRows, guard, session]);
+    const setUnitStatus = useCallback((id, status) => updateUnit(id, { status }), [updateUnit]);
 
     const saveClient = useCallback(async (data) => {
         const method = data.id ? "PATCH" : "POST";
@@ -124,7 +132,7 @@ export default function PanelApp() {
                     <ClientsView clients={clients} units={units} onSave={saveClient} onDelete={deleteClient} />
                 )}
                 {tab === "unidades" && (
-                    <UnitsView units={units} clients={clients} onUnitStatus={setUnitStatus} />
+                    <UnitsView units={units} clients={clients} onUnitStatus={setUnitStatus} onUpdateUnit={updateUnit} />
                 )}
             </main>
         </div>

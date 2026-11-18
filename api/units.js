@@ -1,7 +1,8 @@
 /*
 Estado de las unidades.
 GET   (público)  → { statuses: { "301": "vendido", ... } }  lo lee el showroom
-PATCH (vendedor) → { id, status }  cambia el estado de una unidad
+PATCH (vendedor) → { id, status?, buyer?, discount? }
+        cambia estado, comprador o descuento (los dos últimos nunca son públicos)
 */
 import { requireSession } from "./_lib/auth.js";
 import { handle, httpError, readBody, requirePanelRequest, send } from "./_lib/http.js";
@@ -20,11 +21,23 @@ export default handle(async (req, res) => {
     if (req.method === "PATCH") {
         requirePanelRequest(req);
         const session = requireSession(req);
-        const { id, status } = await readBody(req);
-        if (!UNITS.some((u) => u.id === id)) throw httpError(400, "Unidad inexistente");
-        if (!UNIT_STATUSES.includes(status)) throw httpError(400, "Estado inválido");
-        await store().setUnitStatus(id, status, session.name);
-        return send(res, 200, { ok: true, id, status });
+        const body = await readBody(req);
+        const unit = UNITS.find((x) => x.id === body.id);
+        if (!unit) throw httpError(400, "Unidad inexistente");
+        const fields = {};
+        if (body.status !== undefined) {
+            if (!UNIT_STATUSES.includes(body.status)) throw httpError(400, "Estado inválido");
+            fields.status = body.status;
+        }
+        if (body.buyer !== undefined) fields.buyer = body.buyer ? String(body.buyer).trim().slice(0, 120) || null : null;
+        if (body.discount !== undefined) {
+            const d = body.discount === null || body.discount === "" ? null : Number(body.discount);
+            if (d !== null && (!Number.isFinite(d) || d < 0 || d > 50)) throw httpError(400, "Descuento inválido (0 a 50 %)");
+            fields.discount = d === null ? null : Math.round(d * 100) / 100;
+        }
+        if (!Object.keys(fields).length) throw httpError(400, "Nada que cambiar");
+        await store().updateUnit(unit.id, fields, session.name, unit.status);
+        return send(res, 200, { ok: true, id: unit.id, ...fields });
     }
     send(res, 405, { error: "Método no permitido" });
 });

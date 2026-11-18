@@ -101,8 +101,10 @@ a{color:inherit}
 .p-unit-tile small{color:var(--mut);font-size:11px}
 .p-unit-detail{margin-top:16px;padding:14px;border-radius:14px;background:var(--card-2);border:1px solid var(--line-2);display:flex;flex-direction:column;gap:10px}
 .p-unit-head{display:flex;justify-content:space-between;gap:10px}
-.p-unit-head b{display:block;font-size:16px}
+.p-unit-head>div{display:flex;flex-direction:column;gap:3px}
+.p-unit-head>div>b{font-size:16px}
 .p-unit-head small{color:var(--mut);font-size:12px}
+.p-unit-head small b{color:var(--ink)}
 .p-interest{font-size:12px}
 .p-seg{display:inline-flex;padding:3px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);gap:2px;flex:none}
 .p-seg button{padding:7px 12px;border-radius:9px;font-size:12px;font-weight:500;color:var(--mut);transition:background .2s,color .2s}
@@ -148,8 +150,45 @@ a{color:inherit}
 .p-unit-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .p-unit-info small{font-size:12px;color:var(--mut)}
 
+/* ---------- listado de ventas ---------- */
+.p-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.p-kpis div{padding:12px 14px;border-radius:12px;background:var(--card-2);border:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.p-kpis small{font-size:11px;color:var(--mut)}
+.p-kpis b{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.p-table-wrap{overflow-x:auto;margin:0 -6px}
+.p-table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.p-table th{position:sticky;top:0;background:var(--card);text-align:left;font-weight:600;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:10px 8px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.p-table td{padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+.p-table tr.is-first td{border-top:1px solid var(--line-2)}
+.p-table .num{text-align:right}
+.p-td-floor{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);text-align:center;border-right:1px solid var(--line)}
+.p-table tfoot td{font-weight:700;border-top:2px solid var(--line-2);border-bottom:0;padding-top:12px}
+.p-table .p-seg button{padding:5px 8px;font-size:11px}
+.p-inline{display:inline-flex;align-items:center;gap:4px}
+.p-inline input{width:100%;min-width:120px;padding:6px 8px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink);font-size:12.5px}
+.p-inline.is-num input{min-width:0;width:58px;text-align:right}
+.p-inline input:hover{border-color:var(--line-2)}
+.p-inline input:focus{outline:none;border-color:rgba(255,59,78,.6);background:var(--card-2)}
+.p-inline small{color:var(--mut)}
+.p-sale-cards{display:none}
+.p-sale-card{padding:12px;border-radius:14px;border:1px solid var(--line-2);margin-top:8px;display:flex;flex-direction:column;gap:10px}
+.p-sale-top{display:flex;align-items:center;gap:8px}
+.p-sale-top small{margin-left:auto}
+.p-sale-card dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12.5px}
+.p-sale-card dt{color:var(--mut)}
+.p-sale-card dd{text-align:right;font-variant-numeric:tabular-nums}
+.p-sale-card dd .p-inline{justify-content:flex-end;width:100%}
+.p-sale-card dd .p-inline input{text-align:right;min-width:0}
+.p-sale-card .p-seg{width:100%}
+.p-sale-card .p-seg button{flex:1}
+.p-sale-total{margin-top:14px;padding:12px;border-radius:12px;background:var(--card-2);display:flex;flex-direction:column;gap:6px;font-size:13px}
+.p-sale-total span{display:flex;justify-content:space-between}
+
 /* ---------- responsive ---------- */
 @media (max-width:900px){
+    .p-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .p-table-wrap{display:none}
+    .p-sale-cards{display:block}
     .p-dash{grid-template-columns:minmax(0,1fr)}
     .p-building{height:320px}
 }

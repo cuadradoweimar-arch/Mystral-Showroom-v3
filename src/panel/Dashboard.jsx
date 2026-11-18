@@ -1,7 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from "react";
 import {
     addDaysISO, CLIENT_STATUS, floorLabel, floorShort, followUp, followUpText, formatArea,
-    formatMoney, greeting, initials, PANEL_FLOORS, UNIT_STATUS, UNIT_TYPES, unitById, unitName, whatsappLink,
+    formatMoney, formatPct, greeting, saleOf, initials, PANEL_FLOORS, UNIT_STATUS, UNIT_TYPES, unitById, unitName, whatsappLink,
 } from "./util";
 
 const Building3D = lazy(() => import("./Building3D"));
@@ -142,6 +142,10 @@ export default function Dashboard({ session, units, clients, onUnitStatus, onSav
                             <div>
                                 <b>{unitName(selected)}</b>
                                 <small>{UNIT_TYPES[selected.type].name} · {formatArea(selected.area)} · {formatMoney(selected.price)}</small>
+                                <small>
+                                    {selected.discount ? <>Dcto {formatPct(selected.discount)} → <b>{formatMoney(saleOf(selected).final)}</b></> : "Sin descuento"}
+                                    {selected.buyer && <> · Comprador: <b>{selected.buyer}</b></>}
+                                </small>
                             </div>
                             <button type="button" className="p-x" onClick={() => setSelectedId(null)} aria-label="Cerrar">×</button>
                         </div>
