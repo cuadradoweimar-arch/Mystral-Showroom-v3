@@ -131,6 +131,7 @@ scene.background=new THREE.Color(0x070912);
 scene.fog=new THREE.FogExp2(0x070912,0.0011);
 const camera=new THREE.PerspectiveCamera(50,W()/H(),2,6000);
 const controls=new THREE.OrbitControls(camera,renderer.domElement);
+if(location.search.includes('debug'))window.__dbg={camera,controls,scene};
 controls.enableDamping=true;controls.dampingFactor=.08;
 controls.maxPolarAngle=Math.PI*.46;controls.minDistance=80;controls.maxDistance=2200;
 scene.add(new THREE.HemisphereLight(0x5a6aa0,0x0a0a12,.6));
@@ -375,7 +376,10 @@ function loadModel(p,g,m,beam){
   const L=new THREE.GLTFLoader();if(window.MeshoptDecoder)L.setMeshoptDecoder(MeshoptDecoder);
   L.load('mystral.glb',gl=>{
     const o=gl.scene;o.rotation.y=2.74;g.add(o);
-    o.traverse(c=>{if(!c.isMesh)return;const mt=c.material;if(mt.emissive){mt.emissive.copy(mt.color).lerp(new THREE.Color(0xffffff),.22);modelMats.push(mt);}});
+    o.traverse(c=>{if(!c.isMesh)return;const mt=c.material;
+      // piezas sin material en el archivo: three les pone uno metálico que se ve negro → blanco
+      if(mt.metalness>.5){mt.metalness=0;mt.roughness=.75;mt.color.set(0xf3f1ec);}
+      if(mt.emissive){mt.emissive.copy(mt.color).lerp(new THREE.Color(0xffffff),.22);modelMats.push(mt);}});
     // de noche: luz cálida que ilumina la fachada
     [[-40,30,30],[40,30,-30]].forEach(([x,y,z])=>{const l=new THREE.PointLight(0xffd9a8,0,170,1.4);l.position.set(x,y,z);g.add(l);modelLights.push(l);});
     g.children.forEach(ch=>{if(ch!==o&&ch!==m&&ch!==beam&&ch!==p.ring)ch.visible=false;});
