@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import LogoLoader from "./LogoLoader";
+import { SCENES } from "../../data/scenes";
 
 /*
 =====================================================
@@ -41,12 +42,18 @@ function firstVideoReady() {
     ]);
 }
 
+// La intro (#/mapa) tiene su propia pantalla de carga. Se
+// revisa al montar: SceneManager ya hizo la redirección.
+const startsOnIntro = () => window.location.hash.startsWith(`#/${SCENES.intro.path}`);
+
 export default function AppLoader() {
 
     // loading → leaving (fundido) → done (se desmonta)
-    const [phase, setPhase] = useState("loading");
+    const [phase, setPhase] = useState(() => (startsOnIntro() ? "done" : "loading"));
 
     useEffect(() => {
+
+        if (startsOnIntro()) return;
 
         let cancelled = false;
 

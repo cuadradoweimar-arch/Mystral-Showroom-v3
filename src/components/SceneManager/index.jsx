@@ -5,6 +5,9 @@ import Navbar from "../Navbar/Navbar";
 import Hero from "../Hero/Hero";
 import Fullscreen from "../Fullscreen/Fullscreen";
 import LogoLoader from "../LogoLoader/LogoLoader";
+import SoundToggle from "../SoundToggle/SoundToggle";
+// Intro 3D: un iframe con public/intro/mystral-intro-3d.html
+import IntroMapa3D from "../IntroMapa3D/IntroMapa3D";
 
 import { SCENES } from "../../data/scenes";
 import useSceneRouter from "../../lib/useSceneRouter";
@@ -23,6 +26,10 @@ export default function SceneManager() {
 
     return (
         <>
+            {config.kind === "intro" && (
+                <IntroMapa3D goTo={goTo} />
+            )}
+
             {(config.kind === "video" || config.kind === "image") && (
                 <Viewer
                     scene={scene}
@@ -74,12 +81,20 @@ export default function SceneManager() {
                 <Hero
                     onExplore={() => goTo("location")}
                     onProjects={() => goTo("projects")}
+                    onMap={() => goTo("intro")}
                 />
             )}
 
-            {config.kind !== "brochure" && (
+            {/* En la intro 3D no: taparía los créditos de OpenStreetMap del iframe */}
+            {config.kind !== "brochure" && config.kind !== "intro" && (
                 <Fullscreen raised={config.kind === "tour"} />
             )}
+
+            {/* Siempre montado: el audio no se reinicia al cambiar de escena */}
+            <SoundToggle
+                placement={config.navbar ? "menu" : config.kind === "map" ? "map" : "corner"}
+                track={config.sound ?? null}
+            />
         </>
     );
 }

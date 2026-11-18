@@ -6,13 +6,25 @@ import levels from "../assets/images/levels/levels.jpg";
 CONFIGURACIÓN DE ESCENAS
 
 path:   ruta en la URL (#/path)
-kind:   video | image | tour | map | brochure | pointcloud
+kind:   video | image | tour | map | brochure | pointcloud | intro
 back:   escena a la que vuelve "VOLVER" si no hay historial
 navbar: muestra el menú lateral
+sound:  pista de sonido ambiente (src/lib/ambientAudio.js → TRACKS);
+        sin "sound" la escena queda en silencio
 =====================================================
 */
 
 export const SCENES = {
+
+    // Intro: mapa de la zona antes de la portada. Al abrir el
+    // showroom en la raíz se redirige aquí una vez por visita
+    // (useSceneRouter.js); "INGRESAR" lleva a la portada.
+    intro: {
+        path: "mapa",
+        kind: "intro",
+        back: "home",
+        navbar: false,
+    },
 
     home: {
         path: "",
@@ -21,6 +33,7 @@ export const SCENES = {
         loop: true,
         back: null,
         navbar: false,
+        sound: "exterior",
     },
 
     location: {
@@ -32,6 +45,7 @@ export const SCENES = {
         next: "gallery",
         back: "home",
         navbar: true,
+        sound: "exterior",
     },
 
     gallery: {
@@ -41,6 +55,7 @@ export const SCENES = {
         loop: true,
         back: "home",
         navbar: true,
+        sound: "disponible",
     },
 
     ingreso: {
@@ -58,6 +73,7 @@ export const SCENES = {
         tour: "ingreso",
         back: "ingreso",
         navbar: false,
+        sound: "tour",
     },
 
     project: {
@@ -66,6 +82,7 @@ export const SCENES = {
         tour: "terraza",
         back: "home",
         navbar: false,
+        sound: "tour",
     },
 
     apartments: {
@@ -82,6 +99,7 @@ export const SCENES = {
         tour: "tipoA",
         back: "apartments",
         navbar: false,
+        sound: "tour",
     },
 
     typeB360: {
@@ -90,6 +108,7 @@ export const SCENES = {
         tour: "tipoB",
         back: "apartments",
         navbar: false,
+        sound: "tour",
     },
 
     duplex: {
@@ -98,6 +117,7 @@ export const SCENES = {
         tour: "duplex",
         back: "apartments",
         navbar: false,
+        sound: "tour",
     },
 
     // El piso elegido va en la URL: #/niveles/8

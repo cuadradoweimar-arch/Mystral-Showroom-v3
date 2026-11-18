@@ -15,7 +15,7 @@ export const PROJECTS = [
         name: "MYSTRAL",
         city: "Montería",
         country: "Colombia",
-        coordinates: [-75.871683, 8.780019],
+        coordinates: [-75.87167741881416, 8.779928678907929],
         scene: "home",
         image: mystralImage,
     },

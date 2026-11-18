@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Mystral · Montería</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--acc:#ff3b4e;--acc2:#ff8a5c;--ink:#f4f1ec;--mut:#8b8f9c;--glass:rgba(14,16,24,.74);--poi:#5ee6ff;--green:#5dffa8}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#05060a;color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;overflow:hidden}
+  canvas{display:block;touch-action:none}
+  .mono{font-family:'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase}
+  #top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 14px) 14px 0;z-index:5;pointer-events:none}
+  .brand{display:flex;align-items:baseline;gap:8px}
+  .brand b{font-size:20px;font-weight:700;letter-spacing:-.02em}
+  .brand sup{color:var(--acc);font-size:13px;font-weight:700}
+  .brand span{font-size:10px;color:var(--mut)}
+  #search{margin-top:10px;position:relative;pointer-events:auto;max-width:520px}
+  #search input{width:100%;padding:13px 14px 13px 40px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--ink);font:500 15px 'Space Grotesk';outline:none}
+  #search input:focus{border-color:var(--acc)}
+  #search svg{position:absolute;left:13px;top:13px;opacity:.6}
+  #sugg{margin-top:6px;border-radius:14px;overflow:hidden;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:none;border:1px solid rgba(255,255,255,.08)}
+  #sugg div{padding:12px 14px;font-size:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)}
+  #sugg div:last-child{border:0}
+  #sugg div:hover{background:rgba(255,59,78,.12)}
+  #sugg small{color:var(--mut);font-size:9px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;pointer-events:auto}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:99px;background:var(--glass);font-size:9px;color:var(--mut);border:1px solid transparent;cursor:pointer}
+  .chip.on{border-color:var(--poi);color:var(--ink)}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:p 1.6s infinite}
+  @keyframes p{50%{opacity:.3}}
+  .lbl{position:fixed;left:0;top:0;z-index:3;pointer-events:auto;cursor:pointer;white-space:nowrap;padding:6px 10px;border-radius:8px;background:rgba(10,10,16,.82);border:1px solid var(--acc);font-size:12px;font-weight:600;transition:opacity .3s;will-change:transform}
+  .lbl i{display:block;font-style:normal;font-size:8px;color:var(--acc);margin-bottom:2px}
+  .lbl.poi{border-color:rgba(94,230,255,.6);font-size:11px;padding:5px 9px}
+  .lbl.poi i{color:var(--poi)}
+  .lbl.poi.green{border-color:rgba(93,255,168,.6)}.lbl.poi.green i{color:var(--green)}
+  .lbl.free{border-style:dashed;border-color:rgba(255,255,255,.4)}.lbl.free i{color:var(--mut)}
+  .lbl.river{border:0;background:none;color:#7fb4ff;font-size:10px;cursor:default;pointer-events:none}
+  #card{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:6;max-width:520px;margin:0 auto;padding:18px;border-radius:20px;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);transform:translateY(130%);transition:transform .45s cubic-bezier(.2,.9,.2,1)}
+  #card.on{transform:none}
+  #card .x{position:absolute;right:14px;top:12px;font-size:22px;color:var(--mut);cursor:pointer;background:none;border:0}
+  #card h2{font-size:26px;letter-spacing:-.02em;margin:4px 0 2px}
+  #card p{color:var(--mut);font-size:13px;line-height:1.4}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .stats div{padding:10px;border-radius:12px;background:rgba(255,255,255,.04)}
+  .stats b{display:block;font-size:22px}
+  .stats small{font-size:8px;color:var(--mut)}
+  .near{margin:12px 0;display:flex;flex-direction:column;gap:6px}
+  .near div{display:flex;justify-content:space-between;font-size:13px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.04);cursor:pointer}
+  .near small{color:var(--mut);font-size:9px}
+  .g{color:var(--green)}.y{color:#ffc94d}.r{color:var(--acc)}
+  .btn{display:block;width:100%;text-align:center;padding:14px;border-radius:14px;background:linear-gradient(90deg,var(--acc),var(--acc2));color:#fff;font-weight:700;font-size:15px;text-decoration:none;border:0;cursor:pointer}
+  .btn.ghost{background:rgba(255,255,255,.07);color:var(--ink)}
+  #intro{position:fixed;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#05060a;transition:opacity 1s}
+  /* Esfera de carga del showroom: rombo 3D girando dentro del vidrio */
+  .orb{--orb:88px;--logo:calc(var(--orb)*.69);--side:calc(var(--logo)*.7071);--depth:calc(var(--logo)*.06);position:relative;width:var(--orb);height:var(--orb);margin-bottom:14px;border-radius:50%;perspective:calc(var(--orb)*4);box-shadow:0 0 calc(var(--orb)*.06) rgba(255,255,255,.12),0 0 calc(var(--orb)*.2) rgba(210,210,215,.08);animation:orbFloat 5s ease-in-out infinite}
+  @keyframes orbFloat{50%{transform:translateY(calc(var(--orb)*-.025)) scale(1.015)}}
+  .orb .glass{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+  .orb .plate{position:absolute;z-index:1;left:calc(50.3% - var(--logo)/2);top:calc(51.5% - var(--logo)/2);width:var(--logo);height:var(--logo);display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;animation:plateSpin 5s infinite}
+  @keyframes plateSpin{0%{transform:rotateY(0)}6%{transform:rotateY(0);animation-timing-function:cubic-bezier(.3,.15,.45,.95)}100%{transform:rotateY(360deg)}}
+  .orb .prism{position:relative;width:var(--side);height:var(--side);flex-shrink:0;transform-style:preserve-3d;transform:rotateZ(45deg)}
+  .orb .face,.orb .edge{position:absolute;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .orb .face{inset:0;overflow:hidden}
+  .orb .face img{position:absolute;left:50%;top:50%;width:calc(var(--logo)*500/464);height:calc(var(--logo)*500/464);max-width:none;transform-origin:0 0;transform:rotate(-45deg) translate(-50%,-50%)}
+  .orb .face.front{transform:translateZ(calc(var(--depth)/2))}
+  .orb .face.back{transform:rotateY(180deg) translateZ(calc(var(--depth)/2))}
+  .orb .face.back img{transform:rotate(45deg) translate(-50%,-50%)}
+  .orb .edge.r,.orb .edge.l{top:0;left:calc(50% - var(--depth)/2);width:var(--depth);height:100%;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.7) 50%,rgba(255,255,255,.18))}
+  .orb .edge.r{transform:rotateY(90deg) translateZ(calc(var(--side)/2))}
+  .orb .edge.l{transform:rotateY(-90deg) translateZ(calc(var(--side)/2))}
+  .orb .edge.t,.orb .edge.b{left:0;top:calc(50% - var(--depth)/2);width:100%;height:var(--depth);background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.6) 50%,rgba(255,255,255,.18))}
+  .orb .edge.t{transform:rotateX(90deg) translateZ(calc(var(--side)/2))}
+  .orb .edge.b{transform:rotateX(-90deg) translateZ(calc(var(--side)/2))}
+  @media (prefers-reduced-motion:reduce){.orb,.orb .plate{animation:none}}
+  #intro p{margin-top:10px;font-size:10px;color:var(--mut)}
+  #intro .bar{margin-top:22px;width:140px;height:2px;background:rgba(255,255,255,.1);overflow:hidden}
+  #intro .bar i{display:block;height:100%;width:0;background:var(--acc);animation:ld 1.4s forwards}
+  @keyframes ld{to{width:100%}}
+  #foot{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:4;font-size:7px;color:var(--mut);text-align:right;line-height:1.6}
+  #dayBtn{position:fixed;right:14px;top:calc(env(safe-area-inset-top) + 58px);z-index:5;width:34px;height:34px;border-radius:50%;background:var(--glass);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#ffd166;padding:0}
+  #dayBtn svg{width:16px;height:16px}
+  body.day .brand b{color:#12151d}
+  body.day .lbl.river{color:#1f5fa8}
+  body.day #foot{color:#4c5262}
+  body.day .lbl.av{color:#b8590f!important}
+  body.day #dayBtn{color:#c7d2ff}
+  #compass{position:fixed;right:14px;top:calc(env(safe-area-inset-top) + 16px);z-index:5;width:34px;height:34px;border-radius:50%;background:var(--glass);display:flex;align-items:center;justify-content:center;font:700 10px 'JetBrains Mono';color:var(--acc)}
+</style>
+</head>
+<body>
+<div id="intro"><div class="orb"><div class="plate"><div class="prism"><div class="face front"><img src="rombo-vidrio.png" alt=""></div><div class="face back"><img src="rombo-vidrio.png" alt=""></div><div class="edge r"></div><div class="edge l"></div><div class="edge t"></div><div class="edge b"></div></div></div><img class="glass" src="esfera-vidrio.png" alt=""></div><p class="mono">Entrando a Montería</p><div class="bar"><i></i></div></div>
+
+<div id="top">
+  <div class="brand"><b>Montería · Norte</b></div>
+  <div id="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+    <input id="q" placeholder="Busca un edificio o un lugar…" autocomplete="off">
+    <div id="sugg"></div>
+  </div>
+  <div class="chips">
+    <span class="chip mono" id="live"><span class="dot"></span>1 proyecto en vivo</span>
+  </div>
+</div>
+<div id="compass"><span id="nN">N</span></div>
+<button id="dayBtn" title="Modo día" aria-label="Cambiar a modo día"></button>
+
+<div id="card">
+  <button class="x" id="cx">×</button>
+  <div class="mono" style="font-size:9px;color:var(--acc)" id="ctag">—</div>
+  <h2 id="cname">—</h2>
+  <p id="cdesc">—</p>
+  <div id="cbody"></div>
+</div>
+
+<div id="foot" class="mono">Mapa: © OpenStreetMap<br>Algunos edificios ilustrativos</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(async function(){
+const W=()=>innerWidth,H=()=>innerHeight;
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(W(),H());
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x070912);
+scene.fog=new THREE.FogExp2(0x070912,0.0011);
+const camera=new THREE.PerspectiveCamera(50,W()/H(),2,6000);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.08;
+controls.maxPolarAngle=Math.PI*.46;controls.minDistance=80;controls.maxDistance=2200;
+scene.add(new THREE.HemisphereLight(0x5a6aa0,0x0a0a12,.6));
+const moon=new THREE.DirectionalLight(0x8fa4ff,.35);moon.position.set(-300,500,-200);scene.add(moon);
+// Datos reales de la zona: © OpenStreetMap (ver monteria-osm.json)
+const OSM=await (await fetch('monteria-osm.json')).json();
+
+// 1 unidad = 1 metro. Origen ≈ 8.7790 N, -75.8680 O (norte de Montería). +x = este, -z = norte.
+// Geografía real de OpenStreetMap (monteria-osm.json): río, zonas verdes, calles y edificios.
+const P2=fl=>{const o=[];for(let i=0;i<fl.length;i+=2)o.push([fl[i],fl[i+1]]);return o;};
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(8000,8000),new THREE.MeshLambertMaterial({color:0x0c0e16}));
+ground.rotation.x=-Math.PI/2;scene.add(ground);
+// polígonos planos (agua, verdes) con sus huecos
+function polysGeo(list,y){const pos=[];list.forEach(item=>{
+  const rings=item.r.map(r=>{const v=P2(r).map(([x,z])=>new THREE.Vector2(x,z));if(v.length>1&&v[0].equals(v[v.length-1]))v.pop();return v;});
+  const outer=rings[0];if(!outer||outer.length<3)return;const holes=rings.slice(1).filter(h=>h.length>=3);
+  const vs=outer.concat(...holes);THREE.ShapeUtils.triangulateShape(outer,holes).forEach(t=>t.forEach(k=>pos.push(vs[k].x,y,vs[k].y)));});
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;}
+// cintas de calle (cada tramo se alarga medio ancho para tapar las esquinas)
+function roadsGeo(list,y,wk){const pos=[];list.forEach(rd=>{const q=P2(rd.p||rd),h=(rd.w||wk)/2;
+  for(let i=0;i<q.length-1;i++){const a=q[i],b=q[i+1],dx=b[0]-a[0],dz=b[1]-a[1],l=Math.hypot(dx,dz)||1,ux=dx/l*h,uz=dz/l*h,nx=-uz,nz=ux;
+    const ax=a[0]-ux,az=a[1]-uz,bx=b[0]+ux,bz=b[1]+uz;
+    pos.push(ax+nx,y,az+nz,ax-nx,y,az-nz,bx+nx,y,bz+nz,ax-nx,y,az-nz,bx-nx,y,bz-nz,bx+nx,y,bz+nz);}});
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;}
+scene.add(new THREE.Mesh(polysGeo(OSM.green,.2),new THREE.MeshLambertMaterial({color:0x0f2a1c,emissive:0x0a2416,side:THREE.DoubleSide})));
+scene.add(new THREE.Mesh(polysGeo(OSM.water,.4),new THREE.MeshPhongMaterial({color:0x0f2340,emissive:0x0a1a33,shininess:100,side:THREE.DoubleSide})));
+const MAJOR=['trunk','primary','secondary'];
+scene.add(new THREE.Mesh(roadsGeo(OSM.roads.filter(r=>!MAJOR.includes(r.c)),.3),new THREE.MeshLambertMaterial({color:0x171a24,emissive:0x0c0e14,side:THREE.DoubleSide})));
+scene.add(new THREE.Mesh(roadsGeo(OSM.roads.filter(r=>MAJOR.includes(r.c)),.32),new THREE.MeshLambertMaterial({color:0x1f2331,emissive:0x10131c,side:THREE.DoubleSide})));
+// Av. Primera (Carrera 1 / Carrera 1W en OSM): resaltada en naranja
+scene.add(new THREE.Mesh(roadsGeo(OSM.avenue,.36,14),new THREE.MeshLambertMaterial({color:0x2a2018,emissive:0x1c140c,side:THREE.DoubleSide})));
+OSM.avenue.forEach(a=>{const g=new THREE.BufferGeometry().setFromPoints(P2(a).map(p=>new THREE.Vector3(p[0],.7,p[1])));
+  scene.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:0xffb070,transparent:true,opacity:.45})));});
+
+// textures
+function winTex(seed,lit){const c=document.createElement('canvas');c.width=64;c.height=128;const x=c.getContext('2d');x.fillStyle='#14161f';x.fillRect(0,0,64,128);let s=seed;const r=()=>(s=(s*9301+49297)%233280)/233280;for(let yy=4;yy<128;yy+=8)for(let xx=4;xx<64;xx+=10){const on=r()<lit;x.fillStyle=on?(r()<.8?'#ffd9a0':'#bfe3ff'):'#1d2130';x.fillRect(xx,yy,6,4);}const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;}
+function glowSprite(col){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);}
+const roofMat=new THREE.MeshLambertMaterial({color:0x10121a});
+
+// zonas reservadas (lugares reales)
+const ZONES=[
+  {x0:593,z0:-72,x1:875,z1:126},     // C.C. Buenavista (bbox OSM)
+  {x0:-499,z0:-428,x1:-194,z1:-137}, // Club Campestre (centrado en 8.78155895942096, -75.87115123827346)
+];
+const MYS=[-405,-103]; // Mystral: 8.779928678907929, -75.87167741881416
+
+// ciudad: edificios reales de OSM (con su forma) y, donde OSM no tiene
+// datos, edificios ilustrativos dentro de las manzanas reales, girados como las calles
+let s0=7;const rnd=()=>(s0=(s0*9301+49297)%233280)/233280;
+const classes=[{rep:2},{rep:4},{rep:9}];
+const winMat=(t)=>new THREE.MeshLambertMaterial({map:t,emissive:0xffffff,emissiveMap:t,emissiveIntensity:.85,color:0x2a2e3c});
+const buckets=[];for(let c=0;c<3;c++)for(let m=0;m<4;m++)buckets.push({c,m,list:[]});
+OSM.filler.forEach(f=>buckets[f[6]*4+Math.floor(rnd()*4)].list.push(f));
+const box=new THREE.BoxGeometry(1,1,1);const M4=new THREE.Matrix4(),QY=new THREE.Quaternion(),UP=new THREE.Vector3(0,1,0);
+buckets.forEach(b=>{if(!b.list.length)return;
+  const t=winTex(b.m*91+b.c*13+5,.16+b.m*.06);t.repeat.set(2,classes[b.c].rep);const m=winMat(t);
+  const im=new THREE.InstancedMesh(box,[m,m,roofMat,roofMat,m,m],b.list.length);
+  b.list.forEach(([x,z,w,d,h,th],i)=>{QY.setFromAxisAngle(UP,-th);M4.compose(new THREE.Vector3(x,h/2,z),QY,new THREE.Vector3(w,h,d));im.setMatrixAt(i,M4);});
+  scene.add(im);});
+// edificios reales: muros con ventanas (1 fila cada 3 m) y techo
+{const wall=[],uv=[],roof=[];
+ OSM.buildings.forEach(b=>{const q=P2(b.r);if(q.length>1&&q[0][0]===q[q.length-1][0]&&q[0][1]===q[q.length-1][1])q.pop();if(q.length<3)return;const h=b.h;let u=0;
+   for(let i=0;i<q.length;i++){const a=q[i],c=q[(i+1)%q.length],L=Math.hypot(c[0]-a[0],c[1]-a[1]),u0=u/18,u1=(u+L)/18,v1=h/48;
+     wall.push(a[0],0,a[1],c[0],0,c[1],c[0],h,c[1],a[0],0,a[1],c[0],h,c[1],a[0],h,a[1]);uv.push(u0,0,u1,0,u1,v1,u0,0,u1,v1,u0,v1);u+=L;}
+   THREE.ShapeUtils.triangulateShape(q.map(p=>new THREE.Vector2(p[0],p[1])),[]).forEach(t=>t.forEach(k=>roof.push(q[k][0],h,q[k][1])));});
+ const gw=new THREE.BufferGeometry();gw.setAttribute('position',new THREE.Float32BufferAttribute(wall,3));gw.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));gw.computeVertexNormals();
+ const tw=winTex(311,.24);const mw=winMat(tw);mw.side=THREE.DoubleSide;scene.add(new THREE.Mesh(gw,mw));
+ const gr=new THREE.BufferGeometry();gr.setAttribute('position',new THREE.Float32BufferAttribute(roof,3));gr.computeVertexNormals();
+ const mr=roofMat.clone();mr.side=THREE.DoubleSide;scene.add(new THREE.Mesh(gr,mr));}
+// faroles a lo largo de las calles reales
+{const lamps=[];for(let i=0;i<OSM.lamps.length;i+=2)lamps.push(OSM.lamps[i],5,OSM.lamps[i+1]);
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(lamps,3));
+ scene.add(new THREE.Points(g,new THREE.PointsMaterial({size:20,map:glowSprite('rgba(255,200,120,1)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));}
+
+// tráfico: luces que recorren las avenidas reales (y la Av. Primera)
+const paths=OSM.roads.filter(r=>['trunk','primary','secondary','tertiary'].includes(r.c)).map(r=>P2(r.p)).concat(OSM.avenue.map(P2))
+  .map(q=>{const len=[0];for(let i=1;i<q.length;i++)len.push(len[i-1]+Math.hypot(q[i][0]-q[i-1][0],q[i][1]-q[i-1][1]));return{q,len,L:len[len.length-1]};}).filter(p=>p.L>60);
+const pathsL=paths.reduce((s,p)=>s+p.L,0);
+function pickPath(){let r=rnd()*pathsL;for(const p of paths)if((r-=p.L)<=0)return p;return paths[0];}
+function pathAt(p,s,side){let i=1;while(i<p.len.length-1&&p.len[i]<s)i++;const a=p.q[i-1],b=p.q[i],t=(s-p.len[i-1])/((p.len[i]-p.len[i-1])||1);
+  const dx=b[0]-a[0],dz=b[1]-a[1],l=Math.hypot(dx,dz)||1;return[a[0]+dx*t-dz/l*side,a[1]+dz*t+dx/l*side];}
+const cars=[];const CN=260;const cp=new Float32Array(CN*3),cc=new Float32Array(CN*3);
+for(let i=0;i<CN;i++){const p=pickPath(),dir=rnd()<.5?1:-1;cars.push({p,s:rnd()*p.L,v:dir*(10+rnd()*12),side:dir*2.5});cc.set(dir<0?[1,.15,.2]:[1,.95,.85],i*3);}
+const carGeo=new THREE.BufferGeometry();carGeo.setAttribute('position',new THREE.BufferAttribute(cp,3));carGeo.setAttribute('color',new THREE.BufferAttribute(cc,3));
+scene.add(new THREE.Points(carGeo,new THREE.PointsMaterial({size:9,vertexColors:true,map:glowSprite('rgba(255,255,255,1)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
+
+// ---------- lugares reales ----------
+const POI=0x5ee6ff,GRN=0x5dffa8,ACC=0xff3b4e;
+const poiObjs=[];
+// C.C. Buenavista: el edificio real viene de OSM; aquí sólo el resalte
+{const z=ZONES[0],w=z.x1-z.x0,d=z.z1-z.z0,cx=(z.x0+z.x1)/2,cz=(z.z0+z.z1)/2,g=new THREE.Group();g.position.set(cx,0,cz);
+ const lot=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color:POI,transparent:true,opacity:.07,depthWrite:false}));lot.rotation.x=-Math.PI/2;lot.position.y=.6;g.add(lot);
+ const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w,22,d)),new THREE.LineBasicMaterial({color:POI,transparent:true,opacity:.55}));e.position.y=11;g.add(e);
+ const hit=new THREE.Mesh(new THREE.BoxGeometry(w,22,d),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=11;hit.userData.id='buenavista';g.add(hit);poiObjs.push(hit);
+ scene.add(g);}
+// Club Campestre: sede, piscina y canchas reales (OSM); aquí sólo un halo verde
+// centrado en su coordenada (8.78155895942096, -75.87115123827346)
+{const g=new THREE.Group();g.position.set(-347,0,-283);
+ const halo=new THREE.Mesh(new THREE.CircleGeometry(90,48),new THREE.MeshBasicMaterial({color:GRN,transparent:true,opacity:.08,depthWrite:false}));halo.rotation.x=-Math.PI/2;halo.position.y=.6;g.add(halo);
+ const ring=new THREE.Mesh(new THREE.RingGeometry(88,91,64),new THREE.MeshBasicMaterial({color:GRN,transparent:true,opacity:.45,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=.7;g.add(ring);
+ const hit=new THREE.Mesh(new THREE.CylinderGeometry(90,90,12,24),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=6;hit.userData.id='club';g.add(hit);poiObjs.push(hit);
+ scene.add(g);}
+
+// Ruta por calle: C.C. Buenavista → Mystral (camino más corto por la red
+// real de calles de OSM, calculado al generar monteria-osm.json)
+const ROUTE=OSM.routes&&OSM.routes.buenavista;
+const byStreet=(o,d)=>o.id==='buenavista'&&ROUTE?ROUTE.length:d;
+let routePulse=null;
+// Oculta por defecto: se muestra al seleccionar el C.C. Buenavista
+const routeGroup=new THREE.Group();routeGroup.visible=false;routeGroup.renderOrder=10;scene.add(routeGroup);
+if(ROUTE){
+  routeGroup.add(new THREE.Mesh(roadsGeo([ROUTE.p],1,10),new THREE.MeshBasicMaterial({color:0xffd166,fog:false,transparent:true,opacity:.35,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide})));
+  routeGroup.add(new THREE.Mesh(roadsGeo([ROUTE.p],1.05,3),new THREE.MeshBasicMaterial({color:0xffd166,fog:false,transparent:true,opacity:1,depthWrite:false,depthTest:false,side:THREE.DoubleSide})));
+  const q=P2(ROUTE.p),len=[0];for(let i=1;i<q.length;i++)len.push(len[i-1]+Math.hypot(q[i][0]-q[i-1][0],q[i][1]-q[i-1][1]));
+  const path={q,len,L:len[len.length-1]},N=16,pos=new Float32Array(N*3);
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  routeGroup.add(new THREE.Points(g,new THREE.PointsMaterial({size:26,color:0xffe3a0,fog:false,depthTest:false,map:glowSprite('rgba(255,255,255,1)'),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
+  routePulse={path,N,pos,g,mid:q[Math.floor(q.length/2)]};
+}
+
+// ---------- proyectos ----------
+const projects=[
+  {id:'mystral',kind:'project',name:'Mystral',tag:'Torre residencial · Frente al Río Sinú',desc:'Apartamentos frente a la Ronda del Sinú. Recorrido 360°, modelo 3D, acabados y disponibilidad.',x:MYS[0],z:MYS[1],h:96,w:30,stats:[12,5,23],url:'https://mystral-showroom-v3.vercel.app'}
+];
+const places=[
+  {id:'rio',kind:'place',name:'Río Sinú · Ronda',tag:'Naturaleza · Malecón',desc:'La Ronda del Sinú: parque lineal a orillas del río, para caminar, trotar y ver el atardecer.',x:-284,z:182,h:20,cls:'green'},
+  {id:'buenavista',kind:'place',name:'C.C. Buenavista',tag:'Centro comercial',desc:'Tiendas, cine, restaurantes y supermercado. El centro comercial más grande de Montería.',x:721,z:-2,h:40}/* 8.779021084554838, -75.86144397047119 */,
+  {id:'club',kind:'place',name:'Club Campestre',tag:'Club social · Deporte',desc:'Club con piscina, zonas verdes y deportes, junto al río.',x:-347,z:-283,h:20,cls:'green'}
+];
+const all=[...projects,...places];
+const heroHits=[];
+projects.forEach(p=>{
+  const g=new THREE.Group();g.position.set(p.x,0,p.z);
+  if(p.kind==='project'){
+    const mat=new THREE.MeshLambertMaterial({color:0x1a0d12,emissive:ACC,emissiveIntensity:.18});
+    const m=new THREE.Mesh(box,mat);m.scale.set(p.w,p.h,p.w);m.position.y=p.h/2;g.add(m);p.mat=mat;
+    for(let y=4;y<p.h;y+=3.2){const l=new THREE.Mesh(new THREE.BoxGeometry(p.w+1.6,.45,p.w+1.6),new THREE.MeshBasicMaterial({color:ACC,transparent:true,opacity:.5}));l.position.y=y;g.add(l);}
+    const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(p.w,p.h,p.w)),new THREE.LineBasicMaterial({color:0xff8a95}));e.position.y=p.h/2;g.add(e);
+    const beam=new THREE.Mesh(new THREE.CylinderGeometry(2,5,700,12,1,true),new THREE.MeshBasicMaterial({color:ACC,transparent:true,opacity:.13,depthWrite:false,blending:THREE.AdditiveBlending}));beam.position.y=p.h+350;g.add(beam);
+    m.userData.id=p.id;heroHits.push(m);
+  }else{
+    const pad=new THREE.Mesh(new THREE.BoxGeometry(50,1,50),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.06}));pad.position.y=.5;g.add(pad);
+    const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(30,70,30)),new THREE.LineDashedMaterial({color:0xffffff,dashSize:3,gapSize:3,transparent:true,opacity:.5}));e.computeLineDistances();e.position.y=35;g.add(e);p.ghost=e;
+    const hit=new THREE.Mesh(new THREE.BoxGeometry(50,70,50),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=35;hit.userData.id=p.id;g.add(hit);heroHits.push(hit);
+  }
+  const ring=new THREE.Mesh(new THREE.RingGeometry(34,38,48),new THREE.MeshBasicMaterial({color:p.kind==='free'?0xffffff:ACC,transparent:true,opacity:.5,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=.7;g.add(ring);p.ring=ring;
+  scene.add(g);
+});
+heroHits.push(...poiObjs);
+
+// radios de cercanía alrededor de Mystral (300 m y 1 km)
+[[300,'300 m'],[1000,'1 km']].forEach(([r,t])=>{
+  const c=new THREE.Mesh(new THREE.RingGeometry(r-1.5,r+1.5,128),new THREE.MeshBasicMaterial({color:ACC,transparent:true,opacity:.22,side:THREE.DoubleSide}));
+  c.rotation.x=-Math.PI/2;c.position.set(MYS[0],.8,MYS[1]);scene.add(c);
+});
+
+// labels
+const labels=[];
+function mkLabel(o,html,cls){const el=document.createElement('div');el.className='lbl '+(cls||'');el.innerHTML=html;document.body.appendChild(el);if(o)el.onclick=()=>select(o);labels.push({el,o,x:o?o.x:0,z:o?o.z:0,y:0});return labels[labels.length-1];}
+const dist=(a,b)=>Math.round(Math.hypot(a.x-b.x,a.z-b.z));
+const mys=projects[0];
+all.forEach(o=>{
+  let html,cls='';
+  if(o.kind==='project')html=`<i class="mono">● En vivo</i>${o.name}`;
+  else if(o.kind==='free'){html=`<i class="mono">Disponible</i>${o.name}`;cls='free';}
+  else{html=`<i class="mono">${fmtD(byStreet(o,dist(o,mys)))} de Mystral${o.id==='buenavista'&&ROUTE?' · por calle':''}</i>${o.name}`;cls='poi '+(o.cls||'');}
+  const L=mkLabel(o,html,cls);L.y=Math.max(o.h||0,o.kind==='free'?70:20)+16;L.poi=o.kind==='place';
+});
+{const L=mkLabel(null,'<span class="mono">Río Sinú</span>','river');L.x=-330;L.z=260;L.y=2;}
+{const L=mkLabel(null,'<span class="mono">Av. Primera</span>','river');// tramo de la otra orilla, a la izquierda de Mystral (no detrás de la torre)
+let b=null;OSM.avenue.forEach(a=>P2(a).forEach(p=>{const d=Math.hypot(p[0]+760,p[1]+40);if(!b||d<b.d)b={d,p};}));L.x=b.p[0];L.z=b.p[1];L.y=2;L.el.style.color='#ffb070';L.el.classList.add('av');}
+function fmtD(m){return m<1000?(Math.round(m/10)*10)+' m':(m/1000).toFixed(1).replace('.',',')+' km';}
+
+// ---------- interacción ----------
+let fly=null;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function flyTo(o){
+  if(o.id==='buenavista'&&routePulse){const [mx,mz]=routePulse.mid;fly={t:0,fromP:camera.position.clone(),fromT:controls.target.clone(),toT:new THREE.Vector3(mx-60,0,mz-80),toP:new THREE.Vector3(mx+140,1050,mz+880)};return;}
+  const h=Math.max(o.h||60,60);fly={t:0,fromP:camera.position.clone(),fromT:controls.target.clone(),toT:new THREE.Vector3(o.x,h*.4,o.z),toP:new THREE.Vector3(o.x+h*1.2+90,h*1.1+70,o.z+h*1.2+110)};}
+const card=document.getElementById('card');
+function select(o){
+  flyTo(o);
+  routeGroup.visible=o.id==='buenavista'&&!!ROUTE;
+  document.getElementById('ctag').textContent=o.tag;
+  document.getElementById('cname').textContent=o.name;
+  document.getElementById('cdesc').textContent=o.desc;
+  const b=document.getElementById('cbody');
+  if(o.kind==='project'){
+    const near=places.map(p=>({p,d:byStreet(p,dist(p,o))})).sort((a,b)=>a.d-b.d);
+    b.innerHTML=`<div class="stats"><div><small class="mono">Libres</small><b class="g">${o.stats[0]}</b></div><div><small class="mono">Reservadas</small><b class="y">${o.stats[1]}</b></div><div><small class="mono">Vendidas</small><b class="r">${o.stats[2]}</b></div></div>
+    <div class="mono" style="font-size:9px;color:var(--mut)">Qué tiene cerca</div>
+    <div class="near">${near.map(n=>`<div data-id="${n.p.id}"><span>${n.p.name}</span><small class="mono">${fmtD(n.d)} · ${Math.max(1,Math.round(n.d/80))} min a pie${n.p.id==='buenavista'&&ROUTE?' · <b style="color:#ffd166">Ver ruta</b>':''}</small></div>`).join('')}</div>
+    <button class="btn" id="enterM">Entrar al showroom →</button>`;
+  }else{
+    const d=byStreet(o,dist(o,mys));
+    b.innerHTML=`<div class="stats" style="grid-template-columns:1fr 1fr"><div><small class="mono">${o.id==='buenavista'&&ROUTE?'Por calle':'Desde Mystral'}</small><b>${fmtD(d)}</b></div><div><small class="mono">Caminando</small><b>${Math.max(1,Math.round(d/80))} min</b></div></div>
+    ${o.id==='buenavista'&&ROUTE?'<p class="mono" style="font-size:9px;margin:-4px 0 12px;color:#ffd166">Ruta por calle resaltada en el mapa</p>':''}<button class="btn ghost" id="backM">← Volver a Mystral</button>`;
+    document.getElementById('backM').onclick=()=>select(mys);
+  }
+  // Entrar: avisa al showroom (que la muestra en un iframe) y
+  // éste abre la portada en la misma pestaña
+  const en=document.getElementById('enterM');
+  if(en)en.onclick=()=>{
+    if(window.parent!==window){window.parent.postMessage({type:'mystral:enter'},location.origin);return;}
+    // Abierta sola (fuera del showroom): ir directo a la portada
+    try{sessionStorage.setItem('mystralIntroVisto','1');}catch(e){}
+    location.href='/';
+  };
+  b.querySelectorAll('.near [data-id]').forEach(el=>el.onclick=()=>select(all.find(x=>x.id===el.dataset.id)));
+  card.classList.add('on');
+}
+function closeCard(){card.classList.remove('on');routeGroup.visible=false;}
+document.getElementById('cx').onclick=closeCard;
+const ray=new THREE.Raycaster(),mv=new THREE.Vector2();let down=null;
+renderer.domElement.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];fly=null;introT=1;});
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;
+  mv.set(e.clientX/W()*2-1,-(e.clientY/H())*2+1);ray.setFromCamera(mv,camera);
+  const hit=ray.intersectObjects(heroHits)[0];
+  if(hit)select(all.find(x=>x.id===hit.object.userData.id));else closeCard();
+});
+let showPoi=true;
+document.getElementById('live').onclick=()=>select(mys);
+const q=document.getElementById('q'),sg=document.getElementById('sugg');
+function renderSugg(){const v=q.value.trim().toLowerCase();
+  const list=all.filter(p=>!v||(p.name+' '+p.tag).toLowerCase().includes(v));
+  sg.innerHTML=list.map(p=>`<div data-id="${p.id}"><span>${p.name}</span><small class="mono">${p.kind==='project'?'En vivo':p.kind==='free'?'Disponible':'Lugar'}</small></div>`).join('')||'<div><span style="color:var(--mut)">No encontramos ese lugar</span></div>';
+  sg.style.display='block';}
+q.addEventListener('focus',renderSugg);q.addEventListener('input',renderSugg);
+sg.addEventListener('click',e=>{const d=e.target.closest('[data-id]');if(!d)return;const p=all.find(x=>x.id===d.dataset.id);q.value=p.name;sg.style.display='none';q.blur();select(p);});
+q.addEventListener('keydown',e=>{if(e.key==='Enter'){const d=sg.querySelector('[data-id]');if(d)d.click();}});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#search'))sg.style.display='none';});
+
+// ---------- modo día / noche ----------
+// Cada color de la noche tiene su equivalente de día; se interpolan al cambiar
+const DAYC={0x070912:0xcfdfec,0x0c0e16:0xc9c6be,0x0f2a1c:0xa9d39a,0x0f2340:0x86bbe6,0x171a24:0xfafafa,0x1f2331:0xf6e2a0,
+  0x2a2018:0xf5b04f,0xffb070:0xd9771f,0x10121a:0xbdbab3,0x2a2e3c:0xffffff,0x1a0d12:0xd93545,0x5ee6ff:0x0b8fb3,0x5dffa8:0x139c4f,
+  0xffd166:0xe0960a,0xffe3a0:0xf0a010,0xffffff:0x4a5368,0xff8a95:0xb3172a,0xff3b4e:0xe02436};
+function dayWinTex(seed){const c=document.createElement('canvas');c.width=64;c.height=128;const x=c.getContext('2d');x.fillStyle='#ebe8e1';x.fillRect(0,0,64,128);
+  let s=seed;const r=()=>(s=(s*9301+49297)%233280)/233280;for(let yy=4;yy<128;yy+=8)for(let xx=4;xx<64;xx+=10){x.fillStyle=r()<.5?'#8aa3bd':'#9fb4c9';x.fillRect(xx,yy,6,4);}return c;}
+const dayCanvas=dayWinTex(17);
+const dayMats=[],seen=new Set();
+scene.traverse(o=>{const ms=Array.isArray(o.material)?o.material:o.material?[o.material]:[];ms.forEach(m=>{
+  if(seen.has(m)||m.visible===false)return;seen.add(m);
+  const e={m,c0:m.color?m.color.clone():null,c1:null,blend0:m.blending,op0:m.opacity,lamp:o.isPoints&&m.size===20,car:o.isPoints&&m.size===9};
+  if(e.c0){const h=e.c0.getHex();e.c1=new THREE.Color(e.car?0x353a46:(DAYC[h]!==undefined?DAYC[h]:h));}
+  if(m.emissive){e.e0=m.emissive.clone();e.e1=m.emissive.getHex()===0xff3b4e?m.emissive.clone():new THREE.Color(0);e.ei0=m.emissiveIntensity;}
+  if(m.emissiveMap&&m.map){e.night=m.map;e.day=new THREE.CanvasTexture(dayCanvas);e.day.wrapS=e.day.wrapT=THREE.RepeatWrapping;e.day.repeat.copy(m.map.repeat);}
+  dayMats.push(e);});});
+const lights=[];scene.traverse(o=>{if(o.isHemisphereLight)lights.push({l:o,i0:o.intensity,i1:.68,c0:o.color.clone(),c1:new THREE.Color(0xffffff),g0:o.groundColor.clone(),g1:new THREE.Color(0x8c8678)});
+  else if(o.isDirectionalLight)lights.push({l:o,i0:o.intensity,i1:.6,c0:o.color.clone(),c1:new THREE.Color(0xfff1d6)});});
+const bg0=scene.background.clone(),bg1=new THREE.Color(DAYC[0x070912]);
+let dayK=0,dayTo=0,dayMid=false;
+function applyDay(k){
+  scene.background.copy(bg0).lerp(bg1,k);scene.fog.color.copy(scene.background);scene.fog.density=.0011-k*.0004;
+  const half=k>.5;
+  dayMats.forEach(e=>{const m=e.m;
+    if(e.c0)m.color.copy(e.c0).lerp(e.c1,k);
+    if(e.e0){m.emissive.copy(e.e0).lerp(e.e1,k);if(e.night)m.emissiveIntensity=e.ei0*(1-k);}
+    if(e.lamp){m.opacity=e.op0*(1-k);}
+    if(half!==dayMid){
+      if(e.blend0===THREE.AdditiveBlending&&!e.lamp){m.blending=half?THREE.NormalBlending:THREE.AdditiveBlending;m.needsUpdate=true;}
+      if(e.night){m.map=half?e.day:e.night;m.needsUpdate=true;}}});
+  dayMid=half;
+  lights.forEach(L=>{L.l.intensity=L.i0+(L.i1-L.i0)*k;L.l.color.copy(L.c0).lerp(L.c1,k);if(L.g0)L.l.groundColor.copy(L.g0).lerp(L.g1,k);});
+}
+const dayBtn=document.getElementById('dayBtn');
+const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function setDay(on,instant){dayTo=on?1:0;if(instant){dayK=dayTo;applyDay(dayK);}
+  document.body.classList.toggle('day',on);dayBtn.innerHTML=on?MOON:SUN;
+  dayBtn.title=on?'Modo noche':'Modo día';dayBtn.setAttribute('aria-label',on?'Cambiar a modo noche':'Cambiar a modo día');
+  try{localStorage.setItem('mystralMapaDia',on?'1':'0');}catch(_){}}
+dayBtn.onclick=()=>setDay(dayTo<.5);
+let savedDay=false;try{savedDay=localStorage.getItem('mystralMapaDia')==='1';}catch(_){}
+setDay(savedDay,true);
+
+// ---------- loop ----------
+const clock=new THREE.Clock(),tmp=new THREE.Vector3();
+// Entrada: desde lo alto hasta una vista centrada en Mystral
+let introT=0;const introFrom=new THREE.Vector3(200,2000,1900),introTo=new THREE.Vector3(60,430,480),introTarget=new THREE.Vector3(-330,0,-60);
+camera.position.copy(introFrom);controls.target.set(0,0,0);
+const nN=document.getElementById('nN');
+function loop(){
+  const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+  if(introT<1){introT=Math.min(1,introT+dt/3.4);camera.position.lerpVectors(introFrom,introTo,ease(introT));controls.target.copy(introTarget);}
+  if(fly){fly.t=Math.min(1,fly.t+dt/1.7);const k=ease(fly.t);camera.position.lerpVectors(fly.fromP,fly.toP,k);camera.position.y+=Math.sin(k*Math.PI)*160;controls.target.lerpVectors(fly.fromT,fly.toT,k);if(fly.t>=1)fly=null;}
+  controls.update();
+  if(dayK!==dayTo){dayK=dayTo>dayK?Math.min(dayTo,dayK+dt/.9):Math.max(dayTo,dayK-dt/.9);applyDay(dayK);}
+  cars.forEach((c,i)=>{
+    c.s+=c.v*dt;if(c.s>c.p.L||c.s<0){c.p=pickPath();c.s=c.v>0?0:c.p.L;}
+    const [x,z]=pathAt(c.p,c.s,c.side);cp[i*3]=x;cp[i*3+1]=2.5;cp[i*3+2]=z;});
+  carGeo.attributes.position.needsUpdate=true;
+  if(routePulse&&routeGroup.visible){const R=routePulse;for(let i=0;i<R.N;i++){const s=(t*110+i*R.path.L/R.N)%R.path.L;const [x,z]=pathAt(R.path,s,0);R.pos[i*3]=x;R.pos[i*3+1]=3;R.pos[i*3+2]=z;}R.g.attributes.position.needsUpdate=true;}
+  projects.forEach(p=>{const s=1+(Math.sin(t*2)+1)*.08;p.ring.scale.set(s,s,s);if(p.mat)p.mat.emissiveIntensity=.16+Math.sin(t*2.2)*.06;if(p.ghost)p.ghost.material.opacity=.3+Math.sin(t*3)*.2;});
+  labels.forEach(L=>{tmp.set(L.x,L.y,L.z).project(camera);const vis=tmp.z<1&&(!L.poi||showPoi);L.el.style.opacity=vis?1:0;L.el.style.pointerEvents=vis?'auto':'none';
+    L.el.style.transform=`translate(${(tmp.x*.5+.5)*W()}px,${(-tmp.y*.5+.5)*H()}px) translate(-50%,-100%)`;});
+  const az=controls.getAzimuthalAngle();nN.style.transform=`rotate(${az}rad)`;
+  renderer.render(scene,camera);requestAnimationFrame(loop);
+}
+loop();
+setTimeout(()=>{const i=document.getElementById('intro');i.style.opacity=0;setTimeout(()=>i.remove(),1000);},1500);
+addEventListener('resize',()=>{camera.aspect=W()/H();camera.updateProjectionMatrix();renderer.setSize(W(),H());});
+})();
+</script>
+</body>
+</html>

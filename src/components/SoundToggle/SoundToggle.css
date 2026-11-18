@@ -1,0 +1,92 @@
+/* =====================================================
+   BOTÓN DE SONIDO AMBIENTE
+   Mismo vidrio que el botón de menú (Navbar.css).
+   Por encima de los tours 360 y del modelo 3D (9999),
+   por debajo de la pantalla de carga (20000).
+===================================================== */
+
+.sound-toggle{
+    position:fixed;
+    top:30px;
+    right:30px;
+    width:52px;
+    height:52px;
+    padding:0;
+    border:var(--glass-border);
+    border-radius:50%;
+    background:var(--glass-bg);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter:var(--glass-blur);
+    -webkit-backdrop-filter:var(--glass-blur);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:10000;
+    -webkit-tap-highlight-color:transparent;
+    transition:
+        background .3s ease,
+        box-shadow .3s ease,
+        opacity .3s ease,
+        transform .35s var(--glass-spring);
+}
+
+/* A la izquierda del botón de menú (52 px + 12 px de espacio) */
+.sound-toggle.is-menu{
+    right:94px;
+}
+
+/* A la izquierda de los controles de zoom del mapa */
+.sound-toggle.is-map{
+    top:10px;
+    right:52px;
+}
+
+.sound-toggle:hover{
+    background:var(--glass-bg-hover);
+    box-shadow:var(--glass-shadow-hover);
+    transform:scale(1.06);
+}
+
+.sound-toggle:active{
+    transform:scale(.92);
+}
+
+.sound-toggle svg{
+    width:24px;
+    height:24px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.sound-toggle svg path:first-child{
+    fill:currentColor;
+}
+
+/* Silenciado: más tenue */
+.sound-toggle:not(.is-on){
+    opacity:.75;
+}
+
+@media (max-width:900px){
+
+    .sound-toggle{
+        top:20px;
+        right:20px;
+    }
+
+    /* Menú en top/right 20 px: 52 px + 10 px de espacio */
+    .sound-toggle.is-menu{
+        right:82px;
+    }
+
+    .sound-toggle.is-map{
+        top:10px;
+        right:52px;
+    }
+
+}
