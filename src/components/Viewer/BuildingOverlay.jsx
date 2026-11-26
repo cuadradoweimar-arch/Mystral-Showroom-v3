@@ -1,17 +1,11 @@
-import {
-    BUILDING_MASK,
-    INGRESO_VIDEO_HEIGHT,
-    INGRESO_VIDEO_WIDTH,
-} from "../../data/building";
-
 /*
 =====================================================
-MÁSCARA DEL EDIFICIO (escena INGRESO)
+PUNTO DEL EDIFICIO (escena INGRESO)
 
-Mismo comportamiento que las franjas de la fachada:
-invisible hasta pasar el mouse; en pantallas táctiles
-tampoco se ve hasta tocarlo. viewBox = tamaño del video y
-"slice" = object-fit: cover, para quedar alineada.
+Un punto interactivo sobre la torre (mismo estilo que el
+punto del ingreso 360). Al tocarlo se reproduce "frente
+arriba" y se abre NIVELES. Su posición está en
+.building-hotspot (Viewer.css), en % del video.
 =====================================================
 */
 
@@ -20,29 +14,14 @@ const LABEL = "Ver niveles del edificio";
 export default function BuildingOverlay({ onSelect }) {
 
     return (
-
-        <svg
-            className="levels-overlay"
-            viewBox={`0 0 ${INGRESO_VIDEO_WIDTH} ${INGRESO_VIDEO_HEIGHT}`}
-            preserveAspectRatio="xMidYMid slice"
+        <button
+            type="button"
+            className="ingreso-hotspot building-hotspot"
+            aria-label={LABEL}
+            title={LABEL}
+            onClick={onSelect}
         >
-
-            <path
-                d={BUILDING_MASK}
-                role="button"
-                tabIndex={0}
-                aria-label={LABEL}
-                onClick={onSelect}
-                onKeyDown={(event) => {
-                    if (event.key !== "Enter" && event.key !== " ") return;
-                    event.preventDefault();
-                    onSelect();
-                }}
-            >
-                <title>{LABEL}</title>
-            </path>
-
-        </svg>
-
+            <span className="ingreso-hotspot-dot"></span>
+        </button>
     );
 }

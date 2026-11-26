@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { SCENES, sceneFromPath } from "../data/scenes";
-import { hasSeenIntro } from "./introSeen";
 
 /*
 =====================================================
@@ -28,20 +27,11 @@ function readLocation() {
     };
 }
 
-// Primera carga: si se abre la raíz del showroom y en esta
-// visita aún no vio la intro, se muestra el mapa de intro
-// (#/mapa). Los enlaces directos a otras escenas no cambian.
+// Primera carga: el showroom abre en la portada. El mapa 3D de
+// Montería (#/mapa) es una función más: se abre con "← MAPA"
+// en la portada o con el enlace directo.
 function readInitialLocation() {
-
-    const location = readLocation();
-    const atRoot = window.location.hash.replace(/^#\/?/, "") === "";
-
-    if (location.scene === "home" && atRoot && !hasSeenIntro()) {
-        window.history.replaceState({ depth: 0 }, "", urlFor("intro"));
-        return { scene: "intro", room: null };
-    }
-
-    return location;
+    return readLocation();
 }
 
 function urlFor(scene, room) {

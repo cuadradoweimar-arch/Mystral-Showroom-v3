@@ -937,6 +937,20 @@ arrastrando (usePanZoom.js). Se centra con translate(-50%).
         0 0 25px rgba(255, 255, 255, 0.5);
 }
 
+/* Punto del edificio: sobre la torre (video 1920×1366,
+   la torre ocupa x 56–872, y 190–1078) → abre NIVELES.
+   x = 40 %: en celular el video se recorta a los lados y sólo
+   se ve la parte derecha de la torre (≈ 34–45 %). */
+.building-hotspot{
+    left:40%;
+    top:38%;
+}
+
+.ingreso-hotspot:focus-visible::before{
+    border-color:#ffffff;
+    box-shadow:0 0 12px rgba(255, 255, 255, 0.9);
+}
+
 .ingreso-hotspot:hover .ingreso-hotspot-dot{
     transform:scale(1.35);
     box-shadow:
